@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_timelines/helper/helper_methods.dart';
 import 'package:flutter_timelines/view/components/custom_text_field.dart';
 import 'package:flutter_timelines/view/components/custom_drawer.dart';
 import 'package:flutter_timelines/view/components/wall_post.dart';
@@ -87,10 +88,12 @@ class _HomePageState extends State<HomePage> {
                         final post = snapshot.data!.docs[index];
 
                         return WallPost(
-                            message: post['Message'],
-                            user: post['UserEmail'],
-                            postId: post.id,
-                            likes: List<String>.from(post['Likes'] ?? []));
+                          message: post['Message'],
+                          user: post['UserEmail'],
+                          postId: post.id,
+                          likes: List<String>.from(post['Likes'] ?? []),
+                          time: formatDate(post['TimeStamp']),
+                        );
                       });
                 } else if (snapshot.hasError) {
                   return Center(
