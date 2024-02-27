@@ -56,14 +56,18 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        backgroundColor: Colors.grey[900],
-        title: Text(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        title: const Text(
           "The Wall",
-          style: TextStyle(color: Colors.white),
         ),
-        actions: [IconButton(onPressed: signOut, icon: Icon(Icons.logout))],
+        actions: [
+          IconButton(
+            onPressed: signOut,
+            icon: Icon(Icons.logout),
+          ),
+        ],
       ),
       drawer: CustomDrawer(
         onProfileTap: goToProfilePage,
