@@ -11,6 +11,7 @@ import 'package:flutter_timelines/view/pages/test_page.dart';
 class WallPost extends StatefulWidget {
   final String message;
   final String user;
+  final String username;
   final String time;
   final String postId;
   List<String> likes;
@@ -23,6 +24,7 @@ class WallPost extends StatefulWidget {
     required this.likes,
     required this.time,
     required this.commentCount,
+    required this.username,
   });
 
   @override
@@ -121,7 +123,7 @@ class _WallPostState extends State<WallPost> {
       MaterialPageRoute(
         builder: (context) => TestPage(
           message: widget.message,
-          user: widget.user,
+          user: widget.username,
           time: widget.time,
           postId: widget.postId,
           likes: widget.likes,
@@ -222,7 +224,7 @@ class _WallPostState extends State<WallPost> {
                         Row(
                           children: [
                             Text(
-                              widget.user,
+                              widget.username,
                               style: TextStyle(color: Colors.grey[400]),
                             ),
                             Text(

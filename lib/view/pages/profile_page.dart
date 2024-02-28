@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_timelines/view/components/text_box.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final String postId;
+  const ProfilePage({super.key, required this.postId});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -15,6 +16,8 @@ class _ProfilePageState extends State<ProfilePage> {
   final currentUser = FirebaseAuth.instance.currentUser!;
   //all users
   final usersCollection = FirebaseFirestore.instance.collection('Users');
+  final usersCollectionUpdateName =
+      FirebaseFirestore.instance.collection('UserPosts');
   // edit field
   Future<void> editField(String field) async {
     String newValue = "";
@@ -61,6 +64,11 @@ class _ProfilePageState extends State<ProfilePage> {
     if (newValue.trim().length > 0) {
       //only update if there is something in the textfield
       await usersCollection.doc(currentUser.email).update({field: newValue});
+      if (field == "username") {
+        await usersCollectionUpdateName
+            .doc(widget.postId)
+            .update({'Username': newValue});
+      }
     }
   }
 

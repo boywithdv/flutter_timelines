@@ -15,6 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String postid = "";
   final currentUser = FirebaseAuth.instance.currentUser!;
   //textController
   final textController = TextEditingController();
@@ -23,18 +24,28 @@ class _HomePageState extends State<HomePage> {
     FirebaseAuth.instance.signOut();
   }
 
-  void postMessage() {
-    //only post if there is something in the textfield
+  void postMessage() async {
+    // Only post if there is something in the textField
     if (textController.text.isNotEmpty) {
-      //store in firebase
+      // Store in Firebase
+      String username = '';
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(currentUser.email)
+          .get();
+      if (userSnapshot.exists) {
+        username = userSnapshot.get('username');
+      }
+
       FirebaseFirestore.instance.collection('UserPosts').add({
         'UserEmail': currentUser.email,
+        'Username': username,
         'Message': textController.text,
         'TimeStamp': Timestamp.now(),
         'Likes': [],
       });
     }
-    //clear the textField
+    // Clear the textField
     setState(() {
       textController.clear();
     });
@@ -48,7 +59,9 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const ProfilePage(),
+        builder: (context) => ProfilePage(
+          postId: postid,
+        ),
       ),
     );
   }
@@ -90,9 +103,11 @@ class _HomePageState extends State<HomePage> {
                       itemBuilder: (context, index) {
                         // メッセージ取得
                         final post = snapshot.data!.docs[index];
+                        postid = post.id;
                         return WallPost(
                           message: post['Message'],
                           user: post['UserEmail'],
+                          username: post['Username'],
                           postId: post.id,
                           likes: List<String>.from(post['Likes'] ?? []),
                           time: formatDate(post['TimeStamp']),
@@ -124,7 +139,9 @@ class _HomePageState extends State<HomePage> {
                   ),
                   //post Button
                   IconButton(
-                    onPressed: postMessage,
+                    onPressed: () {
+                      postMessage();
+                    },
                     icon: const Icon(Icons.arrow_circle_up),
                   )
                 ],
