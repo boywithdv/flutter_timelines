@@ -78,59 +78,38 @@ class _HomePageState extends State<HomePage> {
           children: [
             // the wall
             Expanded(
-              child: StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection('UserPosts')
-                    .orderBy("TimeStamp", descending: false)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return ListView.builder(
+                child: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('UserPosts')
+                  .orderBy("TimeStamp", descending: false)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, index) {
+                        //get the message
                         final post = snapshot.data!.docs[index];
-                        final commentsRef = FirebaseFirestore.instance
-                            .collection("UserPosts")
-                            .doc(post.id)
-                            .collection("Comments");
 
-                        return StreamBuilder(
-                          stream: commentsRef.snapshots(),
-                          builder: (context, commentsSnapshot) {
-                            if (commentsSnapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CircularProgressIndicator();
-                            }
-                            if (commentsSnapshot.hasError) {
-                              return Text('Error: ${commentsSnapshot.error}');
-                            }
-                            final List<String> comments = List<String>.from(
-                                commentsSnapshot.data!.docs.map((doc) =>
-                                    (doc.data()['comment'] ?? '') as String));
-
-                            return WallPost(
-                              message: post['Message'],
-                              user: post['UserEmail'],
-                              postId: post.id,
-                              likes: List<String>.from(post['Likes'] ?? []),
-                              time: formatDate(post['TimeStamp']),
-                              commentCount: comments,
-                            );
-                          },
+                        return WallPost(
+                          message: post['Message'],
+                          user: post['UserEmail'],
+                          postId: post.id,
+                          likes: List<String>.from(post['Likes'] ?? []),
+                          time: formatDate(post['TimeStamp']),
+                          commentCount: [],
                         );
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Error: ' + snapshot.error.toString()),
-                    );
-                  }
-                  return const Center(
-                    child: CircularProgressIndicator(),
+                      });
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Error: ' + snapshot.error.toString()),
                   );
-                },
-              ),
-            ),
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            )),
             //post message
             Padding(
               padding: const EdgeInsets.all(25.0),
