@@ -91,7 +91,6 @@ class _HomePageState extends State<HomePage> {
                         //get the message
                         final post = snapshot.data!.docs[index];
 
-<<<<<<< HEAD
                         return WallPost(
                           message: post['Message'],
                           user: post['UserEmail'],
@@ -99,31 +98,6 @@ class _HomePageState extends State<HomePage> {
                           likes: List<String>.from(post['Likes'] ?? []),
                           time: formatDate(post['TimeStamp']),
                           commentCount: [],
-=======
-                        return StreamBuilder(
-                          stream: commentsRef.snapshots(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CircularProgressIndicator();
-                            }
-                            if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            }
-                            final List<String> comments = List<String>.from(
-                                snapshot.data!.docs.map((doc) =>
-                                    (doc.data()['comment'] ?? '') as String));
-
-                            return WallPost(
-                              message: post['Message'],
-                              user: post['UserEmail'],
-                              postId: post.id,
-                              likes: List<String>.from(post['Likes'] ?? []),
-                              time: formatDate(post['TimeStamp']),
-                              commentCount: comments,
-                            );
-                          },
->>>>>>> 8c7f5861fe43cf488361ccf9ef5196a09e1001bc
                         );
                       });
                 } else if (snapshot.hasError) {
