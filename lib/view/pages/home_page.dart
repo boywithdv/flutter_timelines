@@ -96,16 +96,16 @@ class _HomePageState extends State<HomePage> {
 
                         return StreamBuilder(
                           stream: commentsRef.snapshots(),
-                          builder: (context, commentsSnapshot) {
-                            if (commentsSnapshot.connectionState ==
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
                               return CircularProgressIndicator();
                             }
-                            if (commentsSnapshot.hasError) {
-                              return Text('Error: ${commentsSnapshot.error}');
+                            if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
                             }
                             final List<String> comments = List<String>.from(
-                                commentsSnapshot.data!.docs.map((doc) =>
+                                snapshot.data!.docs.map((doc) =>
                                     (doc.data()['comment'] ?? '') as String));
 
                             return WallPost(
