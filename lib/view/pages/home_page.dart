@@ -124,8 +124,9 @@ class _HomePageState extends State<HomePage> {
                   ),
                   //post Button
                   IconButton(
-                      onPressed: postMessage,
-                      icon: const Icon(Icons.arrow_circle_up))
+                    onPressed: postMessage,
+                    icon: const Icon(Icons.arrow_circle_up),
+                  )
                 ],
               ),
             ),

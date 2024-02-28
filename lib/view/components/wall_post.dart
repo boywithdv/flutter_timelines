@@ -269,7 +269,7 @@ class _WallPostState extends State<WallPost> {
                     const SizedBox(
                       width: 10,
                     ),
-                    // COMMNET
+                    // コメント
                     Column(
                       children: [
                         //comment button
