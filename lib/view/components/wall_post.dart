@@ -13,6 +13,7 @@ class WallPost extends StatefulWidget {
   final String time;
   final String postId;
   final List<String> likes;
+  final List<String> commentCount;
   const WallPost({
     super.key,
     required this.message,
@@ -20,6 +21,7 @@ class WallPost extends StatefulWidget {
     required this.postId,
     required this.likes,
     required this.time,
+    required this.commentCount,
   });
 
   @override
@@ -252,7 +254,7 @@ class _WallPostState extends State<WallPost> {
                       ),
                       // comment count
                       Text(
-                        '0',
+                        widget.commentCount.length.toString(),
                         style: TextStyle(color: Colors.grey),
                       )
                     ],
