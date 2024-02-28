@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
       body: Center(
         child: Column(
           children: [
-            // the wall
+            // 投稿
             Expanded(
                 child: StreamBuilder(
               stream: FirebaseFirestore.instance
@@ -88,9 +88,8 @@ class _HomePageState extends State<HomePage> {
                   return ListView.builder(
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, index) {
-                        //get the message
+                        // メッセージ取得
                         final post = snapshot.data!.docs[index];
-
                         return WallPost(
                           message: post['Message'],
                           user: post['UserEmail'],
@@ -110,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                 );
               },
             )),
-            //post message
+            // 投稿メッセージ
             Padding(
               padding: const EdgeInsets.all(25.0),
               child: Row(

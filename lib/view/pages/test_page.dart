@@ -6,58 +6,87 @@ import 'package:flutter_timelines/view/components/comment.dart';
 import 'package:flutter_timelines/view/components/comment_button.dart';
 import 'package:flutter_timelines/view/components/delete_button.dart';
 import 'package:flutter_timelines/view/components/like_button.dart';
-import 'package:flutter_timelines/view/pages/test_page.dart';
+import 'package:flutter_timelines/view/pages/home_page.dart';
 
-class WallPost extends StatefulWidget {
+class TestPage extends StatefulWidget {
   final String message;
   final String user;
   final String time;
   final String postId;
   List<String> likes;
   final List<String> commentCount;
-  WallPost({
-    super.key,
-    required this.message,
-    required this.user,
-    required this.postId,
-    required this.likes,
-    required this.time,
-    required this.commentCount,
-  });
+  TestPage(
+      {super.key,
+      required this.message,
+      required this.user,
+      required this.time,
+      required this.postId,
+      required this.likes,
+      required this.commentCount});
 
   @override
-  State<WallPost> createState() => _WallPostState();
+  State<TestPage> createState() => _TestPageState();
 }
 
-class _WallPostState extends State<WallPost> {
+class _TestPageState extends State<TestPage> {
   //user
-  final currentuser = FirebaseAuth.instance.currentUser!;
+  final currentUser = FirebaseAuth.instance.currentUser!;
   bool isLiked = false;
   //comment text controller
   final TextEditingController _commentTextController = TextEditingController();
   @override
   void initState() {
     super.initState();
-    isLiked = widget.likes.contains(currentuser.email);
+    isLiked = widget.likes.contains(currentUser.email);
   }
 
-  // toggle like
+// TestPageのStateクラス内
+// backToHomePageメソッドを追加
+  void backToHomePage() {
+    // 戻る際にNavigator.pop()の引数として更新されたデータを渡す
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => HomePage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          var begin = Offset(-1.0, 0.0);
+          var end = Offset.zero;
+          var curve = Curves.ease;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+
+// いいねボタンのtoggleLikeメソッドを修正
   void toggleLike() {
     setState(() {
       isLiked = !isLiked;
     });
-    //access the document is Firebase
     DocumentReference postRef =
         FirebaseFirestore.instance.collection('UserPosts').doc(widget.postId);
     if (isLiked) {
-      //if the post is now liked, add the user's email to the 'Likes' field
       postRef.update({
-        'Likes': FieldValue.arrayUnion([currentuser.email])
+        'Likes': FieldValue.arrayUnion([currentUser.email])
+      }).then((value) {
+        setState(() {
+          widget.likes.add(currentUser.email!);
+        });
       });
     } else {
-      //if the post is now unliked, remove the user's email from the 'Likes' field
       postRef.update({
-        'Likes': FieldValue.arrayRemove([currentuser.email])
+        'Likes': FieldValue.arrayRemove([currentUser.email])
+      }).then((value) {
+        setState(() {
+          widget.likes.remove(currentUser.email);
+        });
       });
     }
   }
@@ -71,7 +100,7 @@ class _WallPostState extends State<WallPost> {
         .collection('Comments')
         .add({
       "CommentText": commentText,
-      "CommentedBy": currentuser.email,
+      "CommentedBy": currentUser.email,
       "CommentTime": Timestamp.now() //remember to format this when displaying
     });
   }
@@ -112,30 +141,6 @@ class _WallPostState extends State<WallPost> {
         ],
       ),
     );
-  }
-
-  void openTestPage() async {
-    // データを更新したい場合はNavigator.push()を非同期で実行する
-    final updatedData = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TestPage(
-          message: widget.message,
-          user: widget.user,
-          time: widget.time,
-          postId: widget.postId,
-          likes: widget.likes,
-          commentCount: widget.commentCount,
-        ),
-      ),
-    );
-    // データを更新
-    if (updatedData != null) {
-      setState(() {
-        // TestPageから戻ってきたlikesのデータを反映
-        widget.likes = updatedData;
-      });
-    }
   }
 
   //delete a post
@@ -191,22 +196,24 @@ class _WallPostState extends State<WallPost> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: openTestPage,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
-          borderRadius: BorderRadius.circular(10),
+    return Scaffold(
+      appBar: // 戻るボタンを追加
+          AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: backToHomePage,
         ),
-        margin: EdgeInsets.only(top: 25, left: 25, right: 25),
-        padding: EdgeInsets.all(10),
-        child: Column(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // wallpost
-                Row(
+        title: Text("ポスト"),
+      ),
+      body: Column(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // wallpost
+              Container(
+                margin: const EdgeInsets.only(left: 15, right: 15),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -238,103 +245,93 @@ class _WallPostState extends State<WallPost> {
                       ],
                     ),
                     //delete button
-                    if (widget.user == currentuser.email)
+                    if (widget.user == currentUser.email)
                       DeleteButton(
                         onTap: deletePost,
                       )
                   ],
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                //buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // LIKE
-                    Column(
-                      children: [
-                        //like button
-                        LikeButton(isLiked: isLiked, onTap: toggleLike),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        // like count
-                        Text(
-                          widget.likes.length.toString(),
-                          style: TextStyle(color: Colors.grey),
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    // COMMNET
-                    Column(
-                      children: [
-                        //comment button
-                        CommentButton(
-                          onTap: showCommentDialog,
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        // comment count
-                        Text(
-                          "",
-                          style: TextStyle(color: Colors.grey),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-                //comments under the post
-                StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('UserPosts')
-                      .doc(widget.postId)
-                      .collection("Comments")
-                      .orderBy("CommentTime", descending: true)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    //show loading circle if no data yet
-                    if (!snapshot.hasData) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    return ListView(
-                      shrinkWrap: true, //for nested lists
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: snapshot.data!.docs.map((doc) {
-                        // get the comment
-                        final commentData = doc.data() as Map<String, dynamic>;
-                        //return the comment
-                        return Comment(
-                          text: commentData['CommentText'],
-                          user: commentData['CommentedBy'],
-                          time: formatDate(commentData['CommentTime']),
-                        );
-                      }).toList(),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              //buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // LIKE
+                  Column(
+                    children: [
+                      //like button
+                      LikeButton(isLiked: isLiked, onTap: toggleLike),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      // like count
+                      Text(
+                        widget.likes.length.toString(),
+                        style: TextStyle(color: Colors.grey),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  // COMMNET
+                  Column(
+                    children: [
+                      //comment button
+                      CommentButton(
+                        onTap: showCommentDialog,
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      // comment count
+                      Text(
+                        "",
+                        style: TextStyle(color: Colors.grey),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+              Divider(),
+              // これいかがコメント
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('UserPosts')
+                    .doc(widget.postId)
+                    .collection("Comments")
+                    .orderBy("CommentTime", descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  //show loading circle if no data yet
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
                     );
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
+                  }
+                  return ListView(
+                    shrinkWrap: true, //for nested lists
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: snapshot.data!.docs.map((doc) {
+                      // get the comment
+                      final commentData = doc.data() as Map<String, dynamic>;
+                      //return the comment
+                      return Comment(
+                        text: commentData['CommentText'],
+                        user: commentData['CommentedBy'],
+                        time: formatDate(commentData['CommentTime']),
+                      );
+                    }).toList(),
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 }
-
-/**
-
-          //profile pic
-          Container(
-            decoration:
-                BoxDecoration(shape: BoxShape.circle, color: Colors.grey[400]),
-            padding: EdgeInsets.all(10),
-            child: const Icon(Icons.person),
-          ),
- */
