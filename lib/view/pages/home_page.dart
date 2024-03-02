@@ -66,6 +66,23 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Future<void> getLoading() async {
+    // 新しい情報を取得する処理をここに追加する
+    // 例: データベースから最新の投稿内容を取得する
+
+    // データベースから最新の投稿内容を取得する場合の例
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('UserPosts')
+        .orderBy("TimeStamp", descending: false)
+        .get();
+
+    // 新しい情報を反映させるためにStateを更新する
+    setState(() {
+      // ここで新しい情報を反映させる処理を追加する
+      // 例: 新しい投稿内容を変数に保存するなど
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,76 +103,87 @@ class _HomePageState extends State<HomePage> {
         onProfileTap: goToProfilePage,
         onSignOut: signOut,
       ),
-      body: Center(
-        child: Column(
-          children: [
-            // 投稿
-            Expanded(
+      body: RefreshIndicator(
+        edgeOffset: 0,
+        color: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        onRefresh: () async {
+          // RefreshIndicatorが引っ張られたときの処理を定義する
+          await getLoading();
+          // ここでは新しい投稿内容を取得するために、一度Stateをリセットしてから再度投稿内容を取得する
+        },
+        child: Center(
+          child: Column(
+            children: [
+              // 投稿
+              Expanded(
                 child: StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection('UserPosts')
-                  .orderBy("TimeStamp", descending: false)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        // メッセージ取得
-                        final post = snapshot.data!.docs[index];
-                        postid = post.id;
-                        return WallPost(
-                          message: post['Message'],
-                          user: post['UserEmail'],
-                          username: post['Username'],
-                          postId: post.id,
-                          likes: List<String>.from(post['Likes'] ?? []),
-                          time: formatDate(post['TimeStamp']),
-                          commentCount: [],
-                        );
-                      });
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text('Error: ' + snapshot.error.toString()),
-                  );
-                }
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
-            )),
-            // 投稿メッセージ
-            Padding(
-              padding: const EdgeInsets.all(25.0),
-              child: Row(
-                children: [
-                  //textField
-                  Expanded(
-                    child: CustomTextField(
-                      controller: textController,
-                      hintText: 'Write something on the wall... ',
-                      obscureText: false,
-                    ),
-                  ),
-                  //post Button
-                  IconButton(
-                    onPressed: () {
-                      postMessage();
-                    },
-                    icon: const Icon(Icons.arrow_circle_up),
-                  )
-                ],
+                  stream: FirebaseFirestore.instance
+                      .collection('UserPosts')
+                      .orderBy("TimeStamp", descending: false)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return ListView.builder(
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            // メッセージ取得
+                            final post = snapshot.data!.docs[index];
+                            postid = post.id;
+                            return WallPost(
+                              message: post['Message'],
+                              user: post['UserEmail'],
+                              username: post['Username'],
+                              postId: post.id,
+                              likes: List<String>.from(post['Likes'] ?? []),
+                              time: formatDate(post['TimeStamp']),
+                              commentCount: [],
+                            );
+                          });
+                    } else if (snapshot.hasError) {
+                      return Center(
+                        child: Text('Error: ' + snapshot.error.toString()),
+                      );
+                    }
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                ),
               ),
-            ),
-            // logged in as
-            Text(
-              "Logged in as: " + currentUser.email!,
-              style: TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-          ],
+              // 投稿メッセージ
+              Padding(
+                padding: const EdgeInsets.all(25.0),
+                child: Row(
+                  children: [
+                    //textField
+                    Expanded(
+                      child: CustomTextField(
+                        controller: textController,
+                        hintText: 'Write something on the wall... ',
+                        obscureText: false,
+                      ),
+                    ),
+                    //post Button
+                    IconButton(
+                      onPressed: () {
+                        postMessage();
+                      },
+                      icon: const Icon(Icons.arrow_circle_up),
+                    )
+                  ],
+                ),
+              ),
+              // logged in as
+              Text(
+                "Logged in as: " + currentUser.email!,
+                style: TextStyle(color: Colors.grey),
+              ),
+              const SizedBox(
+                height: 50,
+              ),
+            ],
+          ),
         ),
       ),
     );
