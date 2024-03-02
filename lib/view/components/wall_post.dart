@@ -33,14 +33,14 @@ class WallPost extends StatefulWidget {
 
 class _WallPostState extends State<WallPost> {
   //user
-  final currentuser = FirebaseAuth.instance.currentUser!;
+  final currentUser = FirebaseAuth.instance.currentUser!;
   bool isLiked = false;
   //comment text controller
   final TextEditingController _commentTextController = TextEditingController();
   @override
   void initState() {
     super.initState();
-    isLiked = widget.likes.contains(currentuser.email);
+    isLiked = widget.likes.contains(currentUser.email);
   }
 
   // toggle like
@@ -54,12 +54,12 @@ class _WallPostState extends State<WallPost> {
     if (isLiked) {
       //if the post is now liked, add the user's email to the 'Likes' field
       postRef.update({
-        'Likes': FieldValue.arrayUnion([currentuser.email])
+        'Likes': FieldValue.arrayUnion([currentUser.email])
       });
     } else {
       //if the post is now unliked, remove the user's email from the 'Likes' field
       postRef.update({
-        'Likes': FieldValue.arrayRemove([currentuser.email])
+        'Likes': FieldValue.arrayRemove([currentUser.email])
       });
     }
   }
@@ -67,7 +67,7 @@ class _WallPostState extends State<WallPost> {
   // add a comment
   void addComment(String commentText) {
     //get the user's email address
-    String email = currentuser.email!;
+    String email = currentUser.email!;
     String userEmailAddressisFirst = email.split("@")[0];
     //write the comment to firestore under the comments collection for this post
     FirebaseFirestore.instance
@@ -243,7 +243,7 @@ class _WallPostState extends State<WallPost> {
                       ],
                     ),
                     //delete button
-                    if (widget.user == currentuser.email)
+                    if (widget.user == currentUser.email)
                       DeleteButton(
                         onTap: deletePost,
                       )
