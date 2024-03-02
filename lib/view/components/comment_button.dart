@@ -9,7 +9,7 @@ class CommentButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Icon(
-        Icons.comment,
+        Icons.chat_bubble_outline_sharp,
         color: Colors.grey,
       ),
     );

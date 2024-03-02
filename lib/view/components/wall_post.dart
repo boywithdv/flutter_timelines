@@ -220,31 +220,39 @@ class _WallPostState extends State<WallPost> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // group of text (message + user email )
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // message
-                        Text(widget.message),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              widget.username,
-                              style: TextStyle(color: Colors.grey[400]),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                widget.username,
+                                style: TextStyle(color: Colors.grey[400]),
+                              ),
+                              Text(
+                                '-',
+                                style: TextStyle(color: Colors.grey[400]),
+                              ),
+                              Text(
+                                widget.time,
+                                style: TextStyle(color: Colors.grey[400]),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          // メッセージ
+                          Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Text(
+                              widget.message ?? '',
+                              softWrap: true,
                             ),
-                            Text(
-                              '-',
-                              style: TextStyle(color: Colors.grey[400]),
-                            ),
-                            Text(
-                              widget.time,
-                              style: TextStyle(color: Colors.grey[400]),
-                            ),
-                          ],
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
                     //delete button
                     if (widget.user == currentUser.email)
@@ -257,79 +265,49 @@ class _WallPostState extends State<WallPost> {
                   height: 20,
                 ),
                 //buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // LIKE
-                    Column(
-                      children: [
-                        //like button
-                        LikeButton(isLiked: isLiked, onTap: toggleLike),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        // like count
-                        Text(
-                          widget.likes.length.toString(),
-                          style: TextStyle(color: Colors.grey),
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    // コメント
-                    Column(
-                      children: [
-                        //comment button
-                        CommentButton(
-                          onTap: showCommentDialog,
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        // comment count
-                        Text(
-                          "",
-                          style: TextStyle(color: Colors.grey),
-                        )
-                      ],
-                    ),
-                  ],
+                Padding(
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      // LIKE
+                      Column(
+                        children: [
+                          //like button
+                          LikeButton(isLiked: isLiked, onTap: toggleLike),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          // like count
+                          Text(
+                            widget.likes.length.toString(),
+                            style: TextStyle(color: Colors.grey),
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 15,
+                      ),
+                      // コメント
+                      Column(
+                        children: [
+                          //comment button
+                          CommentButton(
+                            onTap: showCommentDialog,
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          // comment count
+                          Text(
+                            "",
+                            style: TextStyle(color: Colors.grey),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                /*
-                //comments under the post
-                StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('UserPosts')
-                      .doc(widget.postId)
-                      .collection("Comments")
-                      .orderBy("CommentTime", descending: true)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    //show loading circle if no data yet
-                    if (!snapshot.hasData) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    return ListView(
-                      shrinkWrap: true, //for nested lists
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: snapshot.data!.docs.map((doc) {
-                        // get the comment
-                        final commentData = doc.data() as Map<String, dynamic>;
-                        //return the comment
-                        return Comment(
-                          text: commentData['CommentText'],
-                          user: commentData['CommentedBy'],
-                          time: formatDate(commentData['CommentTime']),
-                        );
-                      }).toList(),
-                    );
-                  },
-                ),
-                */
               ],
             ),
           ],
