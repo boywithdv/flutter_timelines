@@ -112,7 +112,7 @@ class _WallPostState extends State<WallPost> {
               //clear controller
               _commentTextController.clear();
             },
-            child: Text("Cancel"),
+            child: const Text("Cancel"),
           ),
         ],
       ),
