@@ -75,85 +75,86 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        appBar: AppBar(
-          title: Text(
-            'ProfilePage',
-          ),
+      backgroundColor: Theme.of(context).colorScheme.background,
+      appBar: AppBar(
+        title: Text(
+          'ProfilePage',
         ),
-        body: StreamBuilder<DocumentSnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('Users')
-              .doc(currentUser.email)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final userData = snapshot.data!.data() as Map<String, dynamic>;
-              return ListView(
-                children: [
-                  const SizedBox(
-                    height: 50,
-                  ),
-                  //profile pic
-                  const Icon(
-                    Icons.person,
-                    size: 72,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  //user email
-                  Text(
-                    currentUser.email!,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey[700]),
-                  ),
-                  //user details
-                  Padding(
-                    padding: const EdgeInsets.only(left: 25.0),
-                    child: Text(
-                      "MyDetails",
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                      ),
+      ),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('Users')
+            .doc(currentUser.email)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final userData = snapshot.data!.data() as Map<String, dynamic>;
+            return ListView(
+              children: [
+                const SizedBox(
+                  height: 50,
+                ),
+                //profile pic
+                const Icon(
+                  Icons.person,
+                  size: 72,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                //user email
+                Text(
+                  currentUser.email!,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey[700]),
+                ),
+                //user details
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
+                  child: Text(
+                    "MyDetails",
+                    style: TextStyle(
+                      color: Colors.grey[600],
                     ),
                   ),
-                  //username
-                  CustomTextBox(
-                    text: userData['username'],
-                    sectionName: 'username',
-                    onPressed: () => editField('username'),
-                  ),
-                  //bio
-                  CustomTextBox(
-                    text: userData['bio'],
-                    sectionName: 'bio',
-                    onPressed: () => editField('bio'),
-                  ),
-                  const SizedBox(
-                    height: 50,
-                  ),
-                  //user posts
-                  Padding(
-                    padding: const EdgeInsets.only(left: 25.0),
-                    child: Text(
-                      "My Posts",
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                      ),
+                ),
+                //username
+                CustomTextBox(
+                  text: userData['username'],
+                  sectionName: 'username',
+                  onPressed: () => editField('username'),
+                ),
+                //bio
+                CustomTextBox(
+                  text: userData['bio'],
+                  sectionName: 'bio',
+                  onPressed: () => editField('bio'),
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
+                //user posts
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
+                  child: Text(
+                    "My Posts",
+                    style: TextStyle(
+                      color: Colors.grey[600],
                     ),
                   ),
-                ],
-              );
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text('Error${snapshot.error}'),
-              );
-            }
-            return const Center(
-              child: CircularProgressIndicator(),
+                ),
+              ],
             );
-          },
-        ));
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error${snapshot.error}'),
+            );
+          }
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      ),
+    );
   }
 }

@@ -152,7 +152,7 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
               ),
-              // 投稿メッセージ
+              // 投稿するメッセージ記入欄
               Padding(
                 padding: const EdgeInsets.all(25.0),
                 child: Row(
