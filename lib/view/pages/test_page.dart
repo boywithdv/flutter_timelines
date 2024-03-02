@@ -95,6 +95,9 @@ class _TestPageState extends State<TestPage> {
 
   // add a comment
   void addComment(String commentText) {
+    //get the user's email address
+    String email = currentUser.email!;
+    String userEmailAddressisFirst = email.split("@")[0];
     //write the comment to firestore under the comments collection for this post
     FirebaseFirestore.instance
         .collection('UserPosts')
@@ -102,7 +105,7 @@ class _TestPageState extends State<TestPage> {
         .collection('Comments')
         .add({
       "CommentText": commentText,
-      "CommentedBy": currentUser.email,
+      "CommentedBy": userEmailAddressisFirst,
       "CommentTime": Timestamp.now() //remember to format this when displaying
     });
   }
