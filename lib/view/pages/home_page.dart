@@ -75,6 +75,7 @@ class _HomePageState extends State<HomePage> {
         .collection('UserPosts')
         .orderBy("TimeStamp", descending: false)
         .get();
+    //未実装であり、今後追加していく予定
 
     // 新しい情報を反映させるためにStateを更新する
     setState(() {
