@@ -14,9 +14,9 @@ String formatDate(Timestamp timestamp) {
   // get day
   String day = dateTime.day.toString();
   // get hour
-  String hour = dateTime.hour.toString();
+  String hour = dateTime.hour.toString().padLeft(2, '0');
   // get minute
-  String minute = dateTime.minute.toString();
+  String minute = dateTime.minute.toString().padLeft(2, '0');
   //final formatted date
   String formattedData = '$year/$month/$day - $hour : $minute';
   return formattedData;
