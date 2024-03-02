@@ -66,6 +66,9 @@ class _WallPostState extends State<WallPost> {
 
   // add a comment
   void addComment(String commentText) {
+    //get the user's email address
+    String email = currentuser.email!;
+    String userEmailAddressisFirst = email.split("@")[0];
     //write the comment to firestore under the comments collection for this post
     FirebaseFirestore.instance
         .collection('UserPosts')
@@ -73,7 +76,7 @@ class _WallPostState extends State<WallPost> {
         .collection('Comments')
         .add({
       "CommentText": commentText,
-      "CommentedBy": currentuser.email,
+      "CommentedBy": userEmailAddressisFirst,
       "CommentTime": Timestamp.now() //remember to format this when displaying
     });
   }
