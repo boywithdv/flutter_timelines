@@ -11,6 +11,7 @@ import 'package:flutter_timelines/view/pages/home_page.dart';
 class TestPage extends StatefulWidget {
   final String message;
   final String user;
+  final String email;
   final String time;
   final String postId;
   List<String> likes;
@@ -22,7 +23,8 @@ class TestPage extends StatefulWidget {
       required this.time,
       required this.postId,
       required this.likes,
-      required this.commentCount});
+      required this.commentCount,
+      required this.email});
 
   @override
   State<TestPage> createState() => _TestPageState();
@@ -186,6 +188,28 @@ class _TestPageState extends State<TestPage> {
                   );
               //dissmiss the dialog
               Navigator.pop(context);
+              // 戻る際にNavigator.pop()の引数として更新されたデータを渡す
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      HomePage(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    var begin = Offset(-1.0, 0.0);
+                    var end = Offset.zero;
+                    var curve = Curves.ease;
+
+                    var tween = Tween(begin: begin, end: end)
+                        .chain(CurveTween(curve: curve));
+
+                    return SlideTransition(
+                      position: animation.drive(tween),
+                      child: child,
+                    );
+                  },
+                ),
+              );
             },
             child: const Text("Delete"),
           ),
@@ -245,10 +269,10 @@ class _TestPageState extends State<TestPage> {
                       ],
                     ),
                     //delete button
-                    if (widget.user == currentUser.email)
+                    if (widget.email == currentUser.email)
                       DeleteButton(
                         onTap: deletePost,
-                      )
+                      ),
                   ],
                 ),
               ),

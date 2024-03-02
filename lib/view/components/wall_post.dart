@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+/*
 import 'package:flutter_timelines/helper/helper_methods.dart';
 import 'package:flutter_timelines/view/components/comment.dart';
+*/
 import 'package:flutter_timelines/view/components/comment_button.dart';
 import 'package:flutter_timelines/view/components/delete_button.dart';
 import 'package:flutter_timelines/view/components/like_button.dart';
@@ -121,12 +123,14 @@ class _WallPostState extends State<WallPost> {
 
   void openTestPage() async {
     // データを更新したい場合はNavigator.push()を非同期で実行する
+
     final updatedData = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => TestPage(
           message: widget.message,
           user: widget.username,
+          email: widget.user,
           time: widget.time,
           postId: widget.postId,
           likes: widget.likes,
@@ -293,6 +297,7 @@ class _WallPostState extends State<WallPost> {
                     ),
                   ],
                 ),
+                /*
                 //comments under the post
                 StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
@@ -324,6 +329,7 @@ class _WallPostState extends State<WallPost> {
                     );
                   },
                 ),
+                */
               ],
             ),
           ],

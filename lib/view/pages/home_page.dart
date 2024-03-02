@@ -25,9 +25,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void postMessage() async {
-    // Only post if there is something in the textField
+    // textFieldに何かがある場合のみ投稿する
     if (textController.text.isNotEmpty) {
-      // Store in Firebase
+      // Firebaseに保存
       String username = '';
       DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
           .collection('Users')
@@ -45,17 +45,17 @@ class _HomePageState extends State<HomePage> {
         'Likes': [],
       });
     }
-    // Clear the textField
+    // textfieldをクリアする
     setState(() {
       textController.clear();
     });
   }
 
-  //navigate to profile page
+  //プロフィールページに遷移
   void goToProfilePage() {
-    //pop menu drawer
+    //navigatorを戻す
     Navigator.pop(context);
-    //go to profile page
+    //プロフィルページ遷移
     Navigator.push(
       context,
       MaterialPageRoute(
