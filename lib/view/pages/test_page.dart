@@ -249,27 +249,23 @@ class _TestPageState extends State<TestPage> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Text(
+                            widget.user,
+                            style: TextStyle(color: Colors.grey[900]),
+                          ),
+
+                          Text(
+                            widget.time,
+                            style: TextStyle(color: Colors.grey[400]),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
                           // message
                           Text(widget.message),
                           const SizedBox(
                             height: 5,
                           ),
-                          Row(
-                            children: [
-                              Text(
-                                widget.user,
-                                style: TextStyle(color: Colors.grey[400]),
-                              ),
-                              Text(
-                                '-',
-                                style: TextStyle(color: Colors.grey[400]),
-                              ),
-                              Text(
-                                widget.time,
-                                style: TextStyle(color: Colors.grey[400]),
-                              ),
-                            ],
-                          )
                         ],
                       ),
                       //delete button
@@ -284,6 +280,9 @@ class _TestPageState extends State<TestPage> {
               const SizedBox(
                 height: 20,
               ),
+              Divider(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
               //buttons
               Padding(
                 padding: EdgeInsets.only(left: 25, right: 10),
@@ -291,40 +290,32 @@ class _TestPageState extends State<TestPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     // LIKE
-                    Column(
-                      children: [
-                        //like button
-                        LikeButton(isLiked: isLiked, onTap: toggleLike),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        // like count
-                        Text(
-                          widget.likes.length.toString(),
-                          style: TextStyle(color: Colors.grey),
-                        )
-                      ],
+                    //like button
+                    LikeButton(isLiked: isLiked, onTap: toggleLike),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    // like count
+                    Text(
+                      widget.likes.length.toString(),
+                      style: TextStyle(color: Colors.grey),
                     ),
                     const SizedBox(
                       width: 10,
                     ),
                     // COMMNET
-                    Column(
-                      children: [
-                        //comment button
-                        CommentButton(
-                          onTap: showCommentDialog,
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        // comment count
-                        Text(
-                          "",
-                          style: TextStyle(color: Colors.grey),
-                        )
-                      ],
+                    //comment button
+                    CommentButton(
+                      onTap: showCommentDialog,
                     ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    // comment count
+                    Text(
+                      "",
+                      style: TextStyle(color: Colors.grey),
+                    )
                   ],
                 ),
               ),
