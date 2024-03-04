@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 /*
 import 'package:flutter_timelines/helper/helper_methods.dart';
 import 'package:flutter_timelines/view/components/comment.dart';
@@ -278,7 +280,7 @@ class _WallPostState extends State<WallPost> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       // LIKE
-                      Column(
+                      Row(
                         children: [
                           //like button
                           LikeButton(isLiked: isLiked, onTap: toggleLike),
@@ -296,7 +298,7 @@ class _WallPostState extends State<WallPost> {
                         width: 20,
                       ),
                       // コメント
-                      Column(
+                      Row(
                         children: [
                           //comment button
                           CommentButton(

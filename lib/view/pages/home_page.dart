@@ -91,7 +91,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
         title: const Text(
-          "The Wall",
+          "オープン",
         ),
         actions: [
           IconButton(
