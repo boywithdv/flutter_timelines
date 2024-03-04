@@ -206,6 +206,13 @@ class _WallPostState extends State<WallPost> {
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 5,
+              color: Color(0x3416202A),
+              offset: Offset(0, 3),
+            )
+          ],
         ),
         margin: EdgeInsets.only(top: 25, left: 25, right: 25),
         padding: EdgeInsets.all(10),
@@ -214,7 +221,7 @@ class _WallPostState extends State<WallPost> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // wallpost
+                // タイムラインの投稿
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,21 +231,13 @@ class _WallPostState extends State<WallPost> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Text(
-                                widget.username,
-                                style: TextStyle(color: Colors.grey[400]),
-                              ),
-                              Text(
-                                '-',
-                                style: TextStyle(color: Colors.grey[400]),
-                              ),
-                              Text(
-                                widget.time,
-                                style: TextStyle(color: Colors.grey[400]),
-                              ),
-                            ],
+                          Text(
+                            widget.username,
+                            style: TextStyle(color: Colors.grey[900]),
+                          ),
+                          Text(
+                            widget.time,
+                            style: TextStyle(color: Colors.grey[400]),
                           ),
                           const SizedBox(
                             height: 15,
@@ -247,7 +246,7 @@ class _WallPostState extends State<WallPost> {
                           Padding(
                             padding: EdgeInsets.only(left: 10),
                             child: Text(
-                              widget.message ?? '',
+                              widget.message,
                               softWrap: true,
                             ),
                           )
@@ -262,11 +261,19 @@ class _WallPostState extends State<WallPost> {
                   ],
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 25,
                 ),
+                Divider(
+                  height: 8,
+                  thickness: 1,
+                  indent: 4,
+                  endIndent: 4,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+
                 //buttons
                 Padding(
-                  padding: EdgeInsets.only(left: 10, right: 10),
+                  padding: EdgeInsets.only(left: 15, right: 15),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -286,7 +293,7 @@ class _WallPostState extends State<WallPost> {
                         ],
                       ),
                       const SizedBox(
-                        width: 15,
+                        width: 20,
                       ),
                       // コメント
                       Column(
