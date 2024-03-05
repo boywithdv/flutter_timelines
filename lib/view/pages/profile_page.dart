@@ -49,7 +49,10 @@ class _ProfilePageState extends State<ProfilePage> {
         actions: [
           //cancel button
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context);
+              return;
+            },
             child: Text(
               'Cancel',
               style: TextStyle(color: Colors.white),
@@ -57,7 +60,33 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           //save button
           TextButton(
-            onPressed: () => Navigator.of(context).pop(newValue),
+            onPressed: () async {
+              Navigator.of(context).pop(newValue);
+              // update firestore
+              if (field == 'username') {
+                await usersCollectionUpdateName
+                    .where('UserEmail', isEqualTo: currentUser.email)
+                    .get()
+                    .then(
+                  (querySnapshot) {
+                    querySnapshot.docs.forEach(
+                      (doc) {
+                        doc.reference.update({'Username': newValue});
+                      },
+                    );
+                  },
+                );
+                await FirebaseFirestore.instance
+                    .collection('Users')
+                    .doc(currentUser.email)
+                    .update({'username': newValue});
+              } else if (field == 'bio') {
+                await FirebaseFirestore.instance
+                    .collection('Users')
+                    .doc(currentUser.email)
+                    .update({'bio': newValue});
+              }
+            },
             child: Text(
               'Save',
               style: TextStyle(color: Colors.white),
@@ -66,26 +95,6 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
     );
-    // update firestore
-    if (newValue.trim().length > 0) {
-      //only update if there is something in the textfield
-      await usersCollectionUpdateName
-          .where('UserEmail', isEqualTo: currentUser.email)
-          .get()
-          .then(
-        (querySnapshot) {
-          querySnapshot.docs.forEach(
-            (doc) {
-              doc.reference.update({'Username': newValue});
-            },
-          );
-        },
-      );
-      await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(currentUser.email)
-          .update({'username': newValue});
-    }
   }
 
   void backToHomePage() {
@@ -159,7 +168,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       Padding(
                         padding: const EdgeInsets.only(left: 25.0),
                         child: Text(
-                          "MyDetails",
+                          "ユーザー情報",
                           style: TextStyle(
                             color: Colors.grey[600],
                           ),
@@ -168,7 +177,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       //username
                       CustomTextBox(
                         text: userData['username'],
-                        sectionName: 'username',
+                        sectionName: 'ユーザー名',
                         onPressed: () => editField('username'),
                       ),
                       //bio
