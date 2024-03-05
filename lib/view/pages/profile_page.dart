@@ -72,11 +72,19 @@ class _ProfilePageState extends State<ProfilePage> {
       await usersCollectionUpdateName
           .where('UserEmail', isEqualTo: currentUser.email)
           .get()
-          .then((querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
-          doc.reference.update({'Username': newValue});
-        });
-      });
+          .then(
+        (querySnapshot) {
+          querySnapshot.docs.forEach(
+            (doc) {
+              doc.reference.update({'Username': newValue});
+            },
+          );
+        },
+      );
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(currentUser.email)
+          .update({'username': newValue});
     }
   }
 
