@@ -121,26 +121,27 @@ class _HomePageState extends State<HomePage> {
                 child: StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection('UserPosts')
-                      .orderBy("TimeStamp", descending: false)
+                      .orderBy("TimeStamp", descending: true)
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return ListView.builder(
-                          itemCount: snapshot.data!.docs.length,
-                          itemBuilder: (context, index) {
-                            // メッセージ取得
-                            final post = snapshot.data!.docs[index];
-                            postid = post.id;
-                            return WallPost(
-                              message: post['Message'],
-                              user: post['UserEmail'],
-                              username: post['Username'],
-                              postId: post.id,
-                              likes: List<String>.from(post['Likes'] ?? []),
-                              time: formatDate(post['TimeStamp']),
-                              commentCount: [],
-                            );
-                          });
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          // メッセージ取得
+                          final post = snapshot.data!.docs[index];
+                          postid = post.id;
+                          return WallPost(
+                            message: post['Message'],
+                            user: post['UserEmail'],
+                            username: post['Username'],
+                            postId: post.id,
+                            likes: List<String>.from(post['Likes'] ?? []),
+                            time: formatDate(post['TimeStamp']),
+                            commentCount: [],
+                          );
+                        },
+                      );
                     } else if (snapshot.hasError) {
                       return Center(
                         child: Text('Error: ' + snapshot.error.toString()),

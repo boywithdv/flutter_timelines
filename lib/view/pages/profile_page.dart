@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_timelines/helper/helper_methods.dart';
 import 'package:flutter_timelines/view/components/text_box.dart';
+import 'package:flutter_timelines/view/components/wall_post.dart';
+import 'package:flutter_timelines/view/pages/home_page.dart';
 
 class ProfilePage extends StatefulWidget {
   final String postId;
@@ -12,6 +15,9 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  String postid = "";
+  //textController
+  final textController = TextEditingController();
   // user
   final currentUser = FirebaseAuth.instance.currentUser!;
   //all users
@@ -63,13 +69,38 @@ class _ProfilePageState extends State<ProfilePage> {
     // update firestore
     if (newValue.trim().length > 0) {
       //only update if there is something in the textfield
-      await usersCollection.doc(currentUser.email).update({field: newValue});
-      if (field == "username") {
-        await usersCollectionUpdateName
-            .doc(widget.postId)
-            .update({'Username': newValue});
-      }
+      await usersCollectionUpdateName
+          .where('UserEmail', isEqualTo: currentUser.email)
+          .get()
+          .then((querySnapshot) {
+        querySnapshot.docs.forEach((doc) {
+          doc.reference.update({'Username': newValue});
+        });
+      });
     }
+  }
+
+  void backToHomePage() {
+    // 戻る際にNavigator.pop()の引数として更新されたデータを渡す
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => HomePage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          var begin = Offset(-1.0, 0.0);
+          var end = Offset.zero;
+          var curve = Curves.ease;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -77,83 +108,132 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: backToHomePage,
+        ),
         title: Text(
           'ProfilePage',
         ),
       ),
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('Users')
-            .doc(currentUser.email)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final userData = snapshot.data!.data() as Map<String, dynamic>;
-            return ListView(
-              children: [
-                const SizedBox(
-                  height: 50,
-                ),
-                //profile pic
-                const Icon(
-                  Icons.person,
-                  size: 72,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                //user email
-                Text(
-                  currentUser.email!,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey[700]),
-                ),
-                //user details
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: Text(
-                    "MyDetails",
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ),
-                //username
-                CustomTextBox(
-                  text: userData['username'],
-                  sectionName: 'username',
-                  onPressed: () => editField('username'),
-                ),
-                //bio
-                CustomTextBox(
-                  text: userData['bio'],
-                  sectionName: 'bio',
-                  onPressed: () => editField('bio'),
-                ),
-                const SizedBox(
-                  height: 50,
-                ),
-                //user posts
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: Text(
-                    "My Posts",
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ),
-              ],
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error${snapshot.error}'),
-            );
-          }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
+      body: Column(
+        children: [
+          Expanded(
+            child: StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('Users')
+                  .doc(currentUser.email)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final userData =
+                      snapshot.data!.data() as Map<String, dynamic>;
+                  return ListView(
+                    children: [
+                      const SizedBox(
+                        height: 50,
+                      ),
+                      //profile pic
+                      const Icon(
+                        Icons.person,
+                        size: 72,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      //user email
+                      Text(
+                        currentUser.email!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey[700]),
+                      ),
+                      //user details
+                      Padding(
+                        padding: const EdgeInsets.only(left: 25.0),
+                        child: Text(
+                          "MyDetails",
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ),
+                      //username
+                      CustomTextBox(
+                        text: userData['username'],
+                        sectionName: 'username',
+                        onPressed: () => editField('username'),
+                      ),
+                      //bio
+                      CustomTextBox(
+                        text: userData['bio'],
+                        sectionName: 'bio',
+                        onPressed: () => editField('bio'),
+                      ),
+                      const SizedBox(
+                        height: 50,
+                      ),
+                      //user posts
+                      Padding(
+                        padding: const EdgeInsets.only(left: 25.0),
+                        child: Text(
+                          "My Posts",
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ),
+                      StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('UserPosts')
+                            .where('UserEmail', isEqualTo: currentUser.email)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (context, index) {
+                                // メッセージ取得
+                                final post = snapshot.data!.docs[index];
+                                postid = post.id;
+
+                                return WallPost(
+                                  message: post['Message'],
+                                  user: post['UserEmail'],
+                                  username: post['Username'],
+                                  postId: post.id,
+                                  likes: List<String>.from(post['Likes'] ?? []),
+                                  time: formatDate(post['TimeStamp']),
+                                  commentCount: [],
+                                );
+                              },
+                            );
+                          } else if (snapshot.hasError) {
+                            return Center(
+                              child:
+                                  Text('Error: ' + snapshot.error.toString()),
+                            );
+                          }
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
+                      ),
+                    ],
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Error${snapshot.error}'),
+                  );
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
