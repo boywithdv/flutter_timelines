@@ -69,10 +69,16 @@ class _WallPostState extends State<WallPost> {
   }
 
   // add a comment
-  void addComment(String commentText) {
+  void addComment(String commentText) async {
     //get the user's email address
-    String email = currentUser.email!;
-    String userEmailAddressisFirst = email.split("@")[0];
+    final userDataSnapshot = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(currentUser.email)
+        .get();
+
+    // ユーザ名を取得
+    final userData = userDataSnapshot.data() as Map<String, dynamic>;
+    final username = userData['username'] as String;
     //write the comment to firestore under the comments collection for this post
     FirebaseFirestore.instance
         .collection('UserPosts')
@@ -80,7 +86,7 @@ class _WallPostState extends State<WallPost> {
         .collection('Comments')
         .add({
       "CommentText": commentText,
-      "CommentedBy": userEmailAddressisFirst,
+      "CommentedBy": username,
       "CommentTime": Timestamp.now() //remember to format this when displaying
     });
   }
@@ -90,10 +96,10 @@ class _WallPostState extends State<WallPost> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Add Comment"),
+        title: const Text("Add Comment"),
         content: TextField(
           controller: _commentTextController,
-          decoration: InputDecoration(hintText: 'Write a comment..'),
+          decoration: const InputDecoration(hintText: 'Write a comment..'),
         ),
         actions: [
           // post button
@@ -168,19 +174,8 @@ class _WallPostState extends State<WallPost> {
             onPressed: () async {
               //delete the comments from firestore first
               //(if you only delete the post, the comments will still be stored in firestore)
-              final commentDocs = await FirebaseFirestore.instance
-                  .collection("UserPosts")
-                  .doc(widget.postId)
-                  .collection("Comments")
-                  .get();
-              for (var doc in commentDocs.docs) {
-                await FirebaseFirestore.instance
-                    .collection("UserPosts")
-                    .doc(widget.postId)
-                    .delete();
-              }
               //then delete the post
-              FirebaseFirestore.instance
+              await FirebaseFirestore.instance
                   .collection("UserPosts")
                   .doc(widget.postId)
                   .delete()
@@ -191,7 +186,7 @@ class _WallPostState extends State<WallPost> {
                     (error) => print("failed to delete post: $error"),
                   );
               //dissmiss the dialog
-              Navigator.pop(context);
+              Navigator.pop(context, true);
             },
             child: const Text("Delete"),
           ),
@@ -208,7 +203,7 @@ class _WallPostState extends State<WallPost> {
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(10),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               blurRadius: 5,
               color: Color(0x3416202A),
