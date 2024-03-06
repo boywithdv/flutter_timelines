@@ -49,15 +49,14 @@ class _ProfilePageState extends State<ProfilePage> {
         actions: [
           //cancel button
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              return;
-            },
-            child: Text(
-              'Cancel',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
+              onPressed: () {
+                Navigator.pop(context);
+                return;
+              },
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Colors.white),
+              )),
           //save button
           TextButton(
             onPressed: () async {
