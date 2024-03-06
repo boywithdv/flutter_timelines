@@ -94,10 +94,17 @@ class _TestPageState extends State<TestPage> {
   }
 
   // add a comment
-  void addComment(String commentText) {
+  void addComment(String commentText) async {
     //get the user's email address
-    String email = currentUser.email!;
-    String userEmailAddressisFirst = email.split("@")[0];
+    final userDataSnapshot = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(currentUser.email)
+        .get();
+
+    // ユーザ名を取得
+    final userData = userDataSnapshot.data() as Map<String, dynamic>;
+    final username = userData['username'] as String;
+
     //write the comment to firestore under the comments collection for this post
     FirebaseFirestore.instance
         .collection('UserPosts')
@@ -105,7 +112,7 @@ class _TestPageState extends State<TestPage> {
         .collection('Comments')
         .add({
       "CommentText": commentText,
-      "CommentedBy": userEmailAddressisFirst,
+      "CommentedBy": username,
       "CommentTime": Timestamp.now() //remember to format this when displaying
     });
   }

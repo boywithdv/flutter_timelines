@@ -79,6 +79,7 @@ class _WallPostState extends State<WallPost> {
     // ユーザ名を取得
     final userData = userDataSnapshot.data() as Map<String, dynamic>;
     final username = userData['username'] as String;
+
     //write the comment to firestore under the comments collection for this post
     FirebaseFirestore.instance
         .collection('UserPosts')
