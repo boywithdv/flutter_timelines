@@ -22,6 +22,7 @@ class _HomePageState extends State<HomePage> {
   //sign user logout
   void signOut() {
     FirebaseAuth.instance.signOut();
+    setState(() {});
   }
 
   void postMessage() async {
@@ -37,13 +38,15 @@ class _HomePageState extends State<HomePage> {
         username = userSnapshot.get('username');
       }
 
-      FirebaseFirestore.instance.collection('UserPosts').add({
-        'UserEmail': currentUser.email,
-        'Username': username,
-        'Message': textController.text,
-        'TimeStamp': Timestamp.now(),
-        'Likes': [],
-      });
+      FirebaseFirestore.instance.collection('UserPosts').add(
+        {
+          'UserEmail': currentUser.email,
+          'Username': username,
+          'Message': textController.text,
+          'TimeStamp': Timestamp.now(),
+          'Likes': [],
+        },
+      );
     }
     // textfieldをクリアする
     setState(() {
@@ -131,6 +134,7 @@ class _HomePageState extends State<HomePage> {
                           // メッセージ取得
                           final post = snapshot.data!.docs[index];
                           postid = post.id;
+                          print(List<String>.from(post['Likes']));
                           return WallPost(
                             message: post['Message'],
                             user: post['UserEmail'],

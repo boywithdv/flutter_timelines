@@ -66,6 +66,7 @@ class _WallPostState extends State<WallPost> {
         'Likes': FieldValue.arrayRemove([currentUser.email])
       });
     }
+    setState(() {});
   }
 
   // add a comment
@@ -181,7 +182,9 @@ class _WallPostState extends State<WallPost> {
                   .doc(widget.postId)
                   .delete()
                   .then(
-                    (value) => print("post deleted"),
+                    (value) => setState(() {
+                      isLiked = widget.likes.contains(currentUser.email);
+                    }),
                   )
                   .catchError(
                     (error) => print("failed to delete post: $error"),
@@ -212,8 +215,8 @@ class _WallPostState extends State<WallPost> {
             )
           ],
         ),
-        margin: EdgeInsets.only(top: 25, left: 25, right: 25),
-        padding: EdgeInsets.all(10),
+        margin: const EdgeInsets.only(top: 25, left: 25, right: 25),
+        padding: const EdgeInsets.all(10),
         child: Column(
           children: [
             Column(
