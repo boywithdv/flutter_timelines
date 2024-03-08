@@ -243,7 +243,7 @@ class _TestPageState extends State<TestPage> {
         children: [
           Column(
             children: [
-              // WallPost
+              // 投稿内容
               Padding(
                 padding: const EdgeInsets.only(left: 10, right: 10),
                 child: Container(
@@ -290,9 +290,9 @@ class _TestPageState extends State<TestPage> {
               Divider(
                 color: Theme.of(context).colorScheme.primary,
               ),
-              //buttons
+              // buttons
               Padding(
-                padding: EdgeInsets.only(left: 25, right: 10),
+                padding: const EdgeInsets.only(left: 25, right: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -311,7 +311,7 @@ class _TestPageState extends State<TestPage> {
                       width: 10,
                     ),
                     // COMMNET
-                    //comment button
+                    // comment button
                     CommentButton(
                       onTap: showCommentDialog,
                     ),
@@ -319,7 +319,7 @@ class _TestPageState extends State<TestPage> {
                       height: 5,
                     ),
                     // comment count
-                    Text(
+                    const Text(
                       "",
                       style: TextStyle(color: Colors.grey),
                     )
@@ -331,7 +331,7 @@ class _TestPageState extends State<TestPage> {
               ),
               // これいかがコメント
               Padding(
-                padding: EdgeInsets.only(left: 10, right: 10),
+                padding: const EdgeInsets.only(left: 10, right: 10),
                 child: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('UserPosts')
@@ -349,18 +349,21 @@ class _TestPageState extends State<TestPage> {
                     return ListView(
                       shrinkWrap: true, //for nested lists
                       physics: const NeverScrollableScrollPhysics(),
-                      children: snapshot.data!.docs.map((doc) {
-                        // get the comment
-                        final commentData = doc.data() as Map<String, dynamic>;
-                        //return the comment
-                        return Comment(
-                          text: commentData['CommentText'],
-                          user: commentData['CommentedBy'],
-                          time: formatDate(
-                            commentData['CommentTime'],
-                          ),
-                        );
-                      }).toList(),
+                      children: snapshot.data!.docs.map(
+                        (doc) {
+                          // get the comment
+                          final commentData =
+                              doc.data() as Map<String, dynamic>;
+                          //return the comment
+                          return Comment(
+                            text: commentData['CommentText'],
+                            user: commentData['CommentedBy'],
+                            time: formatDate(
+                              commentData['CommentTime'],
+                            ),
+                          );
+                        },
+                      ).toList(),
                     );
                   },
                 ),
