@@ -98,7 +98,6 @@ class _TestPageState extends State<TestPage> {
         .collection('Users')
         .doc(currentUser.email)
         .get();
-
     // ユーザ名を取得
     final userData = userDataSnapshot.data() as Map<String, dynamic>;
     final username = userData['username'] as String;
@@ -108,11 +107,14 @@ class _TestPageState extends State<TestPage> {
         .collection('UserPosts')
         .doc(widget.postId)
         .collection('Comments')
-        .add({
-      "CommentText": commentText,
-      "CommentedBy": username,
-      "CommentTime": Timestamp.now() //remember to format this when displaying
-    });
+        .add(
+      {
+        "CommentText": commentText,
+        "CommentedBy": username,
+        "CommentedUserEmail": currentUser.email,
+        "CommentTime": Timestamp.now()
+      },
+    );
   }
 
   // show a dialog box for adding comment
@@ -232,18 +234,18 @@ class _TestPageState extends State<TestPage> {
       appBar: // 戻るボタンを追加
           AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: backToHomePage,
         ),
-        title: Text("ポスト"),
+        title: const Text("ポスト"),
       ),
       body: Column(
         children: [
           Column(
             children: [
-              // wallpost
+              // WallPost
               Padding(
-                padding: EdgeInsets.only(left: 10, right: 10),
+                padding: const EdgeInsets.only(left: 10, right: 10),
                 child: Container(
                   margin: const EdgeInsets.only(left: 15, right: 15),
                   child: Row(
@@ -286,7 +288,7 @@ class _TestPageState extends State<TestPage> {
                 height: 20,
               ),
               Divider(
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(context).colorScheme.primary,
               ),
               //buttons
               Padding(
@@ -324,7 +326,9 @@ class _TestPageState extends State<TestPage> {
                   ],
                 ),
               ),
-              Divider(),
+              Divider(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
               // これいかがコメント
               Padding(
                 padding: EdgeInsets.only(left: 10, right: 10),
@@ -352,7 +356,9 @@ class _TestPageState extends State<TestPage> {
                         return Comment(
                           text: commentData['CommentText'],
                           user: commentData['CommentedBy'],
-                          time: formatDate(commentData['CommentTime']),
+                          time: formatDate(
+                            commentData['CommentTime'],
+                          ),
                         );
                       }).toList(),
                     );

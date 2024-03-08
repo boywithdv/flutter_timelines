@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_timelines/helper/helper_methods.dart';
-import 'package:flutter_timelines/view/components/custom_text_field.dart';
 import 'package:flutter_timelines/view/components/custom_drawer.dart';
 import 'package:flutter_timelines/view/components/wall_post.dart';
+import 'package:flutter_timelines/view/pages/post_form.dart';
 import 'package:flutter_timelines/view/pages/profile_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -158,29 +158,6 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
               ),
-              // 投稿するメッセージ記入欄
-              Padding(
-                padding: const EdgeInsets.all(25.0),
-                child: Row(
-                  children: [
-                    //textField
-                    Expanded(
-                      child: CustomTextField(
-                        controller: textController,
-                        hintText: 'Write something on the wall... ',
-                        obscureText: false,
-                      ),
-                    ),
-                    //post Button
-                    IconButton(
-                      onPressed: () {
-                        postMessage();
-                      },
-                      icon: const Icon(Icons.arrow_circle_up),
-                    )
-                  ],
-                ),
-              ),
               // logged in as
               Text(
                 "Logged in as: " + currentUser.email!,
@@ -191,6 +168,16 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+                fullscreenDialog: true,
+                builder: (BuildContext context) => PostForm())),
+        label: const Icon(
+          Icons.add,
         ),
       ),
     );
