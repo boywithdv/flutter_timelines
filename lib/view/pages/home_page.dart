@@ -8,7 +8,7 @@ import 'package:flutter_timelines/view/components/wall_post.dart';
 import 'package:flutter_timelines/view/pages/profile_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -136,6 +136,8 @@ class _HomePageState extends State<HomePage> {
                           postid = post.id;
                           print(List<String>.from(post['Likes']));
                           return WallPost(
+                            // Keyを追加することでいいねの崩れを修正することができる
+                            key: Key(post.id),
                             message: post['Message'],
                             user: post['UserEmail'],
                             username: post['Username'],
