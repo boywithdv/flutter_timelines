@@ -134,7 +134,6 @@ class _HomePageState extends State<HomePage> {
                           // メッセージ取得
                           final post = snapshot.data!.docs[index];
                           postid = post.id;
-                          print(List<String>.from(post['Likes']));
                           return WallPost(
                             // Keyを追加することでいいねの崩れを修正することができる
                             key: Key(post.id),
