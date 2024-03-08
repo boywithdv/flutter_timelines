@@ -12,13 +12,6 @@ class _PostFormState extends State<PostForm> {
   final currentUser = FirebaseAuth.instance.currentUser!;
   //textController
 
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    _textEditingController.dispose();
-    super.dispose();
-  }
-
   void postMessage() async {
     // textFieldに何かがある場合のみ投稿する
     if (_textEditingController.text.isNotEmpty) {

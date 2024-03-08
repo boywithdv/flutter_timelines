@@ -181,11 +181,6 @@ class _WallPostState extends State<WallPost> {
                   .collection("UserPosts")
                   .doc(widget.postId)
                   .delete()
-                  .then(
-                    (value) => setState(() {
-                      isLiked = widget.likes.contains(currentUser.email);
-                    }),
-                  )
                   .catchError(
                     (error) => print("failed to delete post: $error"),
                   );
