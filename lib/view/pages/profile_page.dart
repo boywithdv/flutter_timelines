@@ -79,6 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     .collection('Users')
                     .doc(currentUser.email)
                     .update({'username': newValue});
+                updateCommentsWithNewUsername(newValue);
               } else if (field == 'bio') {
                 await FirebaseFirestore.instance
                     .collection('Users')
@@ -94,6 +95,26 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
     );
+  }
+
+  // プロフィール名を変更した後に呼び出される関数
+  void updateCommentsWithNewUsername(String newUsername) async {
+    // 現在のユーザーがログインしているか確認
+    if (currentUser != null) {
+      // 自身が投稿したコメントを取得
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collectionGroup('Comments')
+          .where('CommentedUserEmail', isEqualTo: currentUser.email)
+          .get();
+
+      // 取得したコメントを更新
+      for (QueryDocumentSnapshot commentDoc in querySnapshot.docs) {
+        // コメントのドキュメントを更新
+        await commentDoc.reference.update({
+          'CommentedBy': newUsername, // 新しいユーザ名で更新
+        });
+      }
+    }
   }
 
   void backToHomePage() {
