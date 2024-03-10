@@ -69,41 +69,46 @@ class _CommentState extends State<Comment> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: const [
           BoxShadow(
             blurRadius: 5,
             color: Color(0x3416202A),
             offset: Offset(0, 3),
-          )
+          ),
         ],
       ),
-      margin: const EdgeInsets.only(bottom: 5),
+      margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.user,
-                style: TextStyle(color: Colors.grey[700]),
-              ),
-              Text(
-                widget.time,
-                style: TextStyle(color: Colors.grey[400]),
-              ),
-              //comment
-              Text(widget.text),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.user,
+                  style: TextStyle(color: Colors.grey[700]),
+                ),
+                Text(
+                  widget.time,
+                  style: TextStyle(color: Colors.grey[400]),
+                ),
+                //comment
+                Text(
+                  widget.text,
+                  softWrap: true,
+                )
+              ],
+            ),
           ),
           //delete button
           if (widget.commentUserEmail == currentUser.email)
             DeleteButton(
               onTap: deletePost,
-            )
+            ),
         ],
       ),
     );

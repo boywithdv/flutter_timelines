@@ -10,7 +10,7 @@ import 'package:flutter_timelines/view/components/comment.dart';
 import 'package:flutter_timelines/view/components/comment_button.dart';
 import 'package:flutter_timelines/view/components/delete_button.dart';
 import 'package:flutter_timelines/view/components/like_button.dart';
-import 'package:flutter_timelines/view/pages/test_page.dart';
+import 'package:flutter_timelines/view/pages/post_page.dart';
 
 class WallPost extends StatefulWidget {
   final String message;
@@ -89,6 +89,8 @@ class _WallPostState extends State<WallPost> {
         .add({
       "CommentText": commentText,
       "CommentedBy": username,
+      "CommentedUserEmail": currentUser.email,
+
       "CommentTime": Timestamp.now() //remember to format this when displaying
     });
   }
@@ -137,7 +139,7 @@ class _WallPostState extends State<WallPost> {
     final updatedData = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => TestPage(
+        builder: (context) => PostPage(
           message: widget.message,
           user: widget.username,
           email: widget.user,
@@ -245,7 +247,7 @@ class _WallPostState extends State<WallPost> {
                               widget.message,
                               softWrap: true,
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
