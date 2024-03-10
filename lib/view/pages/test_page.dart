@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_timelines/helper/helper_methods.dart';
 import 'package:flutter_timelines/view/components/comment.dart';
 import 'package:flutter_timelines/view/components/comment_button.dart';
@@ -183,11 +184,15 @@ class _TestPageState extends State<TestPage> {
                 await FirebaseFirestore.instance
                     .collection("UserPosts")
                     .doc(widget.postId)
+                    .collection("Comments")
+                    .doc(widget.postId)
                     .delete();
               }
               //then delete the post
               FirebaseFirestore.instance
                   .collection("UserPosts")
+                  .doc(widget.postId)
+                  .collection("Comments")
                   .doc(widget.postId)
                   .delete()
                   .then(
@@ -241,134 +246,133 @@ class _TestPageState extends State<TestPage> {
       ),
       body: Column(
         children: [
-          Column(
-            children: [
-              // 投稿内容
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: Container(
-                  margin: const EdgeInsets.only(left: 15, right: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // 投稿内容
+          Padding(
+            padding: const EdgeInsets.only(left: 10, right: 10),
+            child: Container(
+              margin: const EdgeInsets.only(left: 15, right: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // group of text (message + user email )
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // group of text (message + user email )
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.user,
-                            style: TextStyle(color: Colors.grey[900]),
-                          ),
-
-                          Text(
-                            widget.time,
-                            style: TextStyle(color: Colors.grey[400]),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          // message
-                          Text(widget.message),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                        ],
+                      Text(
+                        widget.user,
+                        style: TextStyle(color: Colors.grey[900]),
                       ),
-                      //delete button
-                      if (widget.email == currentUser.email)
-                        DeleteButton(
-                          onTap: deletePost,
-                        ),
+
+                      Text(
+                        widget.time,
+                        style: TextStyle(color: Colors.grey[400]),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      // message
+                      Text(widget.message),
+                      const SizedBox(
+                        height: 5,
+                      ),
                     ],
                   ),
+                  //delete button
+                  if (widget.email == currentUser.email)
+                    DeleteButton(
+                      onTap: deletePost,
+                    ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Divider(
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          // buttons
+          Padding(
+            padding: const EdgeInsets.only(left: 25, right: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                // LIKE
+                //like button
+                LikeButton(isLiked: isLiked, onTap: toggleLike),
+                const SizedBox(
+                  height: 5,
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Divider(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              // buttons
-              Padding(
-                padding: const EdgeInsets.only(left: 25, right: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    // LIKE
-                    //like button
-                    LikeButton(isLiked: isLiked, onTap: toggleLike),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    // like count
-                    Text(
-                      widget.likes.length.toString(),
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    // COMMNET
-                    // comment button
-                    CommentButton(
-                      onTap: showCommentDialog,
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    // comment count
-                    const Text(
-                      "",
-                      style: TextStyle(color: Colors.grey),
-                    )
-                  ],
+                // like count
+                Text(
+                  widget.likes.length.toString(),
+                  style: TextStyle(color: Colors.grey),
                 ),
-              ),
-              Divider(
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-              // これいかがコメント
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('UserPosts')
-                      .doc(widget.postId)
-                      .collection("Comments")
-                      .orderBy("CommentTime", descending: true)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    //show loading circle if no data yet
-                    if (!snapshot.hasData) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                const SizedBox(
+                  width: 10,
+                ),
+                // COMMNET
+                // comment button
+                CommentButton(
+                  onTap: showCommentDialog,
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                // comment count
+                const Text(
+                  "",
+                  style: TextStyle(color: Colors.grey),
+                )
+              ],
+            ),
+          ),
+          Divider(
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+          // これいかがコメント
+          Expanded(
+            child: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('UserPosts')
+                  .doc(widget.postId)
+                  .collection('Comments')
+                  .orderBy("CommentTime", descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      // メッセージ取得
+                      final post = snapshot.data!.docs[index];
+                      String postid = post.id;
+                      return Comment(
+                        // Keyを追加することでいいねの崩れを修正することができる
+                        key: Key(post.id),
+                        text: post['CommentText'],
+                        user: post['CommentedBy'], commentedPostId: postid,
+                        wallPostId: widget.postId,
+
+                        time: formatDate(
+                          post['CommentTime'],
+                        ),
+                        commentUserEmail: post['CommentedUserEmail'],
                       );
-                    }
-                    return ListView(
-                      shrinkWrap: true, //for nested lists
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: snapshot.data!.docs.map(
-                        (doc) {
-                          // get the comment
-                          final commentData =
-                              doc.data() as Map<String, dynamic>;
-                          //return the comment
-                          return Comment(
-                            text: commentData['CommentText'],
-                            user: commentData['CommentedBy'],
-                            time: formatDate(
-                              commentData['CommentTime'],
-                            ),
-                          );
-                        },
-                      ).toList(),
-                    );
-                  },
-                ),
-              ),
-            ],
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Error: ' + snapshot.error.toString()),
+                  );
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
           ),
         ],
       ),
