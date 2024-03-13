@@ -10,6 +10,8 @@ class Comment extends StatefulWidget {
   final String user;
   final String time;
   final String commentUserEmail;
+  final void Function()? resetCommentCounter;
+
   const Comment(
       {super.key,
       required this.text,
@@ -17,7 +19,8 @@ class Comment extends StatefulWidget {
       required this.time,
       required this.commentedPostId,
       required this.commentUserEmail,
-      required this.wallPostId});
+      required this.wallPostId,
+      this.resetCommentCounter});
 
   @override
   State<Comment> createState() => _CommentState();
@@ -25,6 +28,23 @@ class Comment extends StatefulWidget {
 
 class _CommentState extends State<Comment> {
   final currentUser = FirebaseAuth.instance.currentUser!;
+  int commentCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCommentCount();
+  }
+
+  Future<void> fetchCommentCount() async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('UserPosts')
+        .doc(widget.wallPostId)
+        .collection('Comments')
+        .get();
+    commentCount = querySnapshot.size;
+  }
+
   //delete a post
   void deletePost() {
     //show a dialog box asking for confirmation before deleting the post
@@ -45,15 +65,24 @@ class _CommentState extends State<Comment> {
               //delete the comments from firestore first
               //(if you only delete the post, the comments will still be stored in firestore)
               //then delete the post
-              await FirebaseFirestore.instance
-                  .collection("UserPosts")
-                  .doc(widget.wallPostId)
-                  .collection("Comments")
-                  .doc(widget.commentedPostId)
-                  .delete()
-                  .catchError(
-                    (error) => print("failed to delete post: $error"),
-                  );
+              try {
+                // コメントを削除
+                await FirebaseFirestore.instance
+                    .collection("UserPosts")
+                    .doc(widget.wallPostId)
+                    .collection("Comments")
+                    .doc(widget.commentedPostId)
+                    .delete();
+
+                // コメントの削除後、対応する投稿のコメント件数を更新
+                widget.resetCommentCounter
+                    ?.call(); // resetCommentCounterメソッドを呼び出し
+                fetchCommentCount(); // コメント件数を更新する処理
+
+                // ダイアログを閉じる処理...
+              } catch (error) {
+                print("Failed to delete comment: $error");
+              }
               //dissmiss the dialog
               Navigator.pop(context, true);
             },

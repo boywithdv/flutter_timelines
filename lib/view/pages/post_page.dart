@@ -16,7 +16,6 @@ class PostPage extends StatefulWidget {
   final String time;
   final String postId;
   List<String> likes;
-  final List<String> commentCount;
   PostPage(
       {super.key,
       required this.message,
@@ -24,7 +23,6 @@ class PostPage extends StatefulWidget {
       required this.time,
       required this.postId,
       required this.likes,
-      required this.commentCount,
       required this.email});
 
   @override
@@ -37,10 +35,24 @@ class _PostPageState extends State<PostPage> {
   bool isLiked = false;
   //comment text controller
   final TextEditingController _commentTextController = TextEditingController();
+  int commentCount = 0;
+
   @override
   void initState() {
     super.initState();
     isLiked = widget.likes.contains(currentUser.email);
+    fetchCommentCount();
+  }
+
+  Future<void> fetchCommentCount() async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('UserPosts')
+        .doc(widget.postId)
+        .collection('Comments')
+        .get();
+    setState(() {
+      commentCount = querySnapshot.size;
+    });
   }
 
 // PostPageのStateクラス内
@@ -102,20 +114,22 @@ class _PostPageState extends State<PostPage> {
     // ユーザ名を取得
     final userData = userDataSnapshot.data() as Map<String, dynamic>;
     final username = userData['username'] as String;
-
-    //write the comment to firestore under the comments collection for this post
-    FirebaseFirestore.instance
-        .collection('UserPosts')
-        .doc(widget.postId)
-        .collection('Comments')
-        .add(
-      {
-        "CommentText": commentText,
-        "CommentedBy": username,
-        "CommentedUserEmail": currentUser.email,
-        "CommentTime": Timestamp.now()
-      },
-    );
+    setState(() {
+      //write the comment to firestore under the comments collection for this post
+      FirebaseFirestore.instance
+          .collection('UserPosts')
+          .doc(widget.postId)
+          .collection('Comments')
+          .add(
+        {
+          "CommentText": commentText,
+          "CommentedBy": username,
+          "CommentedUserEmail": currentUser.email,
+          "CommentTime": Timestamp.now()
+        },
+      );
+      fetchCommentCount();
+    });
   }
 
   // show a dialog box for adding comment
@@ -175,35 +189,16 @@ class _PostPageState extends State<PostPage> {
             onPressed: () async {
               //delete the comments from firestore first
               //(if you only delete the post, the comments will still be stored in firestore)
-              final commentDocs = await FirebaseFirestore.instance
-                  .collection("UserPosts")
-                  .doc(widget.postId)
-                  .collection("Comments")
-                  .get();
-              for (var doc in commentDocs.docs) {
-                await FirebaseFirestore.instance
-                    .collection("UserPosts")
-                    .doc(widget.postId)
-                    .collection("Comments")
-                    .doc(widget.postId)
-                    .delete();
-              }
               //then delete the post
               FirebaseFirestore.instance
                   .collection("UserPosts")
                   .doc(widget.postId)
-                  .collection("Comments")
-                  .doc(widget.postId)
                   .delete()
-                  .then(
-                    (value) => print("post deleted"),
-                  )
                   .catchError(
                     (error) => print("failed to delete post: $error"),
                   );
               //dissmiss the dialog
               Navigator.pop(context);
-              // 戻る際にNavigator.pop()の引数として更新されたデータを渡す
               Navigator.push(
                 context,
                 PageRouteBuilder(
@@ -280,7 +275,7 @@ class _PostPageState extends State<PostPage> {
                       ],
                     ),
                   ),
-                  //delete button
+                  //投稿のdelete button
                   if (widget.email == currentUser.email)
                     DeleteButton(
                       onTap: deletePost,
@@ -324,8 +319,8 @@ class _PostPageState extends State<PostPage> {
                   height: 5,
                 ),
                 // comment count
-                const Text(
-                  "",
+                Text(
+                  commentCount.toString(),
                   style: TextStyle(color: Colors.grey),
                 )
               ],
@@ -363,7 +358,9 @@ class _PostPageState extends State<PostPage> {
                         text: post['CommentText'],
                         user: post['CommentedBy'], commentedPostId: postid,
                         wallPostId: widget.postId,
-
+                        resetCommentCounter: () {
+                          fetchCommentCount();
+                        },
                         time: formatDate(
                           post['CommentTime'],
                         ),

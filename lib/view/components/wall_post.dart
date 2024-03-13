@@ -19,7 +19,6 @@ class WallPost extends StatefulWidget {
   final String time;
   final String postId;
   List<String> likes;
-  final List<String> commentCount;
   WallPost({
     super.key,
     required this.message,
@@ -27,7 +26,6 @@ class WallPost extends StatefulWidget {
     required this.postId,
     required this.likes,
     required this.time,
-    required this.commentCount,
     required this.username,
   });
 
@@ -41,10 +39,24 @@ class _WallPostState extends State<WallPost> {
   bool isLiked = false;
   //comment text controller
   final TextEditingController _commentTextController = TextEditingController();
+  int commentCount = 0; // コメントの件数を保持する変数を追加
+
   @override
   void initState() {
     super.initState();
     isLiked = widget.likes.contains(currentUser.email);
+    fetchCommentCount();
+  }
+
+  Future<void> fetchCommentCount() async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('UserPosts')
+        .doc(widget.postId)
+        .collection('Comments')
+        .get();
+    setState(() {
+      commentCount = querySnapshot.size;
+    });
   }
 
   // toggle like
@@ -66,7 +78,6 @@ class _WallPostState extends State<WallPost> {
         'Likes': FieldValue.arrayRemove([currentUser.email])
       });
     }
-    setState(() {});
   }
 
   // add a comment
@@ -82,16 +93,19 @@ class _WallPostState extends State<WallPost> {
     final username = userData['username'] as String;
 
     //write the comment to firestore under the comments collection for this post
-    FirebaseFirestore.instance
-        .collection('UserPosts')
-        .doc(widget.postId)
-        .collection('Comments')
-        .add({
-      "CommentText": commentText,
-      "CommentedBy": username,
-      "CommentedUserEmail": currentUser.email,
+    setState(() {
+      FirebaseFirestore.instance
+          .collection('UserPosts')
+          .doc(widget.postId)
+          .collection('Comments')
+          .add({
+        "CommentText": commentText,
+        "CommentedBy": username,
+        "CommentedUserEmail": currentUser.email,
 
-      "CommentTime": Timestamp.now() //remember to format this when displaying
+        "CommentTime": Timestamp.now() //remember to format this when displaying
+      });
+      fetchCommentCount();
     });
   }
 
@@ -146,7 +160,6 @@ class _WallPostState extends State<WallPost> {
           time: widget.time,
           postId: widget.postId,
           likes: widget.likes,
-          commentCount: widget.commentCount,
         ),
       ),
     );
@@ -305,7 +318,7 @@ class _WallPostState extends State<WallPost> {
                           ),
                           // comment count
                           Text(
-                            widget.commentCount.length.toString(),
+                            commentCount.toString(),
                             style: TextStyle(color: Colors.grey),
                           )
                         ],

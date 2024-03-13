@@ -144,7 +144,6 @@ class _HomePageState extends State<HomePage> {
                             postId: post.id,
                             likes: List<String>.from(post['Likes'] ?? []),
                             time: formatDate(post['TimeStamp']),
-                            commentCount: ["", ""],
                           );
                         },
                       );

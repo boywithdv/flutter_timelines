@@ -242,7 +242,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                   postId: post.id,
                                   likes: List<String>.from(post['Likes'] ?? []),
                                   time: formatDate(post['TimeStamp']),
-                                  commentCount: [],
                                 );
                               },
                             );
