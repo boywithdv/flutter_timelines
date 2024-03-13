@@ -305,7 +305,7 @@ class _WallPostState extends State<WallPost> {
                           ),
                           // comment count
                           Text(
-                            "",
+                            widget.commentCount.length.toString(),
                             style: TextStyle(color: Colors.grey),
                           )
                         ],
