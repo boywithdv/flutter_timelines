@@ -21,8 +21,9 @@ class _HomePageState extends State<HomePage> {
   final textController = TextEditingController();
   //sign user logout
   void signOut() {
-    FirebaseAuth.instance.signOut();
-    setState(() {});
+    setState(() {
+      FirebaseAuth.instance.signOut();
+    });
   }
 
   void postMessage() async {
