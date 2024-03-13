@@ -12,15 +12,16 @@ class Comment extends StatefulWidget {
   final String commentUserEmail;
   final void Function()? resetCommentCounter;
 
-  const Comment(
-      {super.key,
-      required this.text,
-      required this.user,
-      required this.time,
-      required this.commentedPostId,
-      required this.commentUserEmail,
-      required this.wallPostId,
-      this.resetCommentCounter});
+  const Comment({
+    super.key,
+    required this.text,
+    required this.user,
+    required this.time,
+    required this.commentedPostId,
+    required this.commentUserEmail,
+    required this.wallPostId,
+    this.resetCommentCounter,
+  });
 
   @override
   State<Comment> createState() => _CommentState();

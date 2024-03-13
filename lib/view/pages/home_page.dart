@@ -172,10 +172,12 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-                fullscreenDialog: true,
-                builder: (BuildContext context) => PostForm())),
+          context,
+          MaterialPageRoute(
+            fullscreenDialog: true,
+            builder: (BuildContext context) => PostForm(),
+          ),
+        ),
         label: const Icon(
           Icons.add,
         ),
