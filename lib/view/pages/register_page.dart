@@ -16,6 +16,9 @@ class _RegisterPageState extends State<RegisterPage> {
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
   final confirmPasswordTextController = TextEditingController();
+  final errorTextController = TextEditingController();
+  bool isVisible = true;
+
   // sign user up
   void signUp() async {
     // show loading circle
@@ -30,7 +33,9 @@ class _RegisterPageState extends State<RegisterPage> {
       //pp loading circle
       Navigator.pop(context);
       //show error to user
-      displayMessage("Passwords don't match!");
+      setState(() {
+        errorTextController.text = "パスワードが間違っています🤔";
+      });
       return;
     }
     //try creating the user
@@ -56,8 +61,24 @@ class _RegisterPageState extends State<RegisterPage> {
       if (context.mounted) Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
-      //show error to user
-      displayMessage(e.code);
+      setState(() {
+        if (e.code == "weak-code") {
+          errorTextController.text = "パスワードは6文字以上にしてください🔥";
+          return;
+        }
+        if (e.code == "email-already-in-use") {
+          errorTextController.text = "すでに登録済みのメールアドレスです😭";
+          return;
+        }
+        if (e.code == "invalid-email") {
+          errorTextController.text = "フォーマットが正しくありません🫨";
+          return;
+        }
+        if (e.code == "operation-not-allowed") {
+          errorTextController.text = "指定したメールアドレス・パスワードは現在使用できません。";
+          return;
+        }
+      });
     }
   }
 
@@ -68,6 +89,13 @@ class _RegisterPageState extends State<RegisterPage> {
         title: Text(message),
       ),
     );
+  }
+
+  // ignore: non_constant_identifier_names
+  void visibility_on_off() {
+    setState(() {
+      isVisible = !isVisible;
+    });
   }
 
   @override
@@ -84,7 +112,7 @@ class _RegisterPageState extends State<RegisterPage> {
             children: [
               SizedBox(height: height * 0.1),
               // logo
-              Icon(
+              const Icon(
                 Icons.lock,
                 size: 100,
               ),
@@ -92,31 +120,55 @@ class _RegisterPageState extends State<RegisterPage> {
                 height: height * 0.04,
               ),
               // welcome back message
-              Text('Lets create an account for you'),
+              const Text('Lets create an account for you'),
+              Text(
+                errorTextController.text,
+                style: TextStyle(color: Colors.red),
+              ),
               SizedBox(
                 height: height * 0.03,
               ),
               //email textfield
               CustomTextField(
-                  controller: emailTextController,
-                  hintText: 'Email',
-                  obscureText: false),
-              SizedBox(
+                controller: emailTextController,
+                hintText: 'Email',
+                obscureText: false,
+                prefixIcon: const Icon(Icons.mail),
+              ),
+              const SizedBox(
                 height: 10,
               ),
               CustomTextField(
-                  controller: passwordTextController,
-                  hintText: "Password",
-                  obscureText: true),
-              SizedBox(
+                controller: passwordTextController,
+                hintText: "Password",
+                obscureText: isVisible,
+                prefixIcon: const Icon(Icons.password),
+                suffixIcon: isVisible
+                    ? IconButton(
+                        icon: const Icon(
+                          Icons.visibility,
+                        ),
+                        onPressed: visibility_on_off,
+                      )
+                    : IconButton(
+                        icon: const Icon(
+                          Icons.visibility_off,
+                        ),
+                        onPressed: visibility_on_off,
+                      ),
+              ),
+
+              const SizedBox(
                 height: 10,
               ),
               // password textfield
               CustomTextField(
-                  controller: confirmPasswordTextController,
-                  hintText: "Confirm Password",
-                  obscureText: true),
-              SizedBox(
+                controller: confirmPasswordTextController,
+                hintText: "Confirm Password",
+                obscureText: true,
+                prefixIcon: Icon(Icons.password),
+              ),
+              const SizedBox(
                 height: 10,
               ),
               // sign up button
@@ -124,7 +176,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 text: 'Sign Up',
                 onTap: signUp,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 25,
               ),
               // go to register page
@@ -137,12 +189,12 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Colors.grey[700],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 4,
                   ),
                   GestureDetector(
                     onTap: widget.onTap,
-                    child: Text(
+                    child: const Text(
                       "Login now ",
                       style: TextStyle(
                           fontWeight: FontWeight.bold, color: Colors.blue),

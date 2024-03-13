@@ -4,11 +4,16 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
-  const CustomTextField(
-      {super.key,
-      required this.controller,
-      required this.hintText,
-      required this.obscureText});
+  final Widget prefixIcon;
+  final Widget? suffixIcon;
+  const CustomTextField({
+    super.key,
+    required this.controller,
+    required this.hintText,
+    required this.obscureText,
+    required this.prefixIcon,
+    this.suffixIcon,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +25,7 @@ class CustomTextField extends StatelessWidget {
           borderSide:
               BorderSide(color: Theme.of(context).colorScheme.secondary),
         ),
-        focusedBorder: OutlineInputBorder(
+        focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white),
         ),
         fillColor: Theme.of(context).colorScheme.primary,
@@ -29,6 +34,8 @@ class CustomTextField extends StatelessWidget {
         hintStyle: TextStyle(
           color: Colors.grey[500],
         ),
+        prefixIcon: prefixIcon,
+        suffixIcon: suffixIcon,
       ),
     );
   }

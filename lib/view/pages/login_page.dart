@@ -14,6 +14,10 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
+  final errorTextController = TextEditingController();
+
+  bool isVisible = true;
+
   //sign user in
   void signIn() async {
     //show loading circle
@@ -33,7 +37,9 @@ class _LoginPageState extends State<LoginPage> {
       //pop loading circle
       Navigator.pop(context);
       //display error message
-      displayMessage(e.code);
+      setState(() {
+        errorTextController.text = "ログインできません😢";
+      });
     }
   }
 
@@ -45,6 +51,12 @@ class _LoginPageState extends State<LoginPage> {
         title: Text(message),
       ),
     );
+  }
+
+  void visibility_on_off() {
+    setState(() {
+      isVisible = !isVisible;
+    });
   }
 
   @override
@@ -61,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               SizedBox(height: height * 0.1),
               // logo
-              Icon(
+              const Icon(
                 Icons.lock,
                 size: 100,
               ),
@@ -69,24 +81,49 @@ class _LoginPageState extends State<LoginPage> {
                 height: height * 0.04,
               ),
               // welcome back message
-              Text('Welcome back, you`ve been missed!'),
+              const Text(
+                'Welcome back, you`ve been missed!',
+              ),
+              Text(
+                errorTextController.text,
+                style: const TextStyle(color: Colors.red),
+              ),
               SizedBox(
                 height: height * 0.03,
               ),
               //email textfield
               CustomTextField(
-                  controller: emailTextController,
-                  hintText: 'Email',
-                  obscureText: false),
-              SizedBox(
+                controller: emailTextController,
+                hintText: 'Email',
+                obscureText: false,
+                prefixIcon: const Icon(Icons.mail),
+              ),
+              const SizedBox(
                 height: 10,
               ),
               // password textfield
               CustomTextField(
-                  controller: passwordTextController,
-                  hintText: "Password",
-                  obscureText: true),
-              SizedBox(
+                controller: passwordTextController,
+                hintText: "Password",
+                obscureText: isVisible,
+                prefixIcon: const Icon(
+                  Icons.password,
+                ),
+                suffixIcon: isVisible
+                    ? IconButton(
+                        icon: const Icon(
+                          Icons.visibility,
+                        ),
+                        onPressed: visibility_on_off,
+                      )
+                    : IconButton(
+                        icon: const Icon(
+                          Icons.visibility_off,
+                        ),
+                        onPressed: visibility_on_off,
+                      ),
+              ),
+              const SizedBox(
                 height: 10,
               ),
               // sign in button
@@ -94,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                 text: 'Sign in',
                 onTap: signIn,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 25,
               ),
               // go to register page
@@ -107,12 +144,12 @@ class _LoginPageState extends State<LoginPage> {
                       color: Colors.grey[700],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 4,
                   ),
                   GestureDetector(
                     onTap: widget.onTap,
-                    child: Text(
+                    child: const Text(
                       "Register now ",
                       style: TextStyle(
                           fontWeight: FontWeight.bold, color: Colors.blue),
