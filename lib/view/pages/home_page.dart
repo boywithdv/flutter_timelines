@@ -29,9 +29,7 @@ class _HomePageState extends State<HomePage> {
 
   //sign user logout
   void signOut() {
-    setState(() {
-      FirebaseAuth.instance.signOut();
-    });
+    FirebaseAuth.instance.signOut();
   }
 
   void postMessage() async {
@@ -64,11 +62,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   //プロフィールページに遷移
-  void goToProfilePage() {
+  void goToProfilePage() async {
     //navigatorを戻す
     Navigator.pop(context);
     //プロフィルページ遷移
-    Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ProfilePage(
@@ -76,6 +74,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+    await getLoading();
   }
 
   Future<void> getLoading() async {
