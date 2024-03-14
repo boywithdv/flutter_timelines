@@ -278,30 +278,34 @@ class _PostPageState extends State<PostPage> {
                 children: [
                   // group of text (message + user email )
                   Expanded(
-                    child: GestureDetector(
-                      onTap: userProfilePageNavigation,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.user,
-                            style: TextStyle(color: Colors.grey[900]),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        GestureDetector(
+                          onTap: userProfilePageNavigation,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.user,
+                                style: TextStyle(color: Colors.grey[900]),
+                              ),
+                              Text(
+                                widget.time,
+                                style: TextStyle(color: Colors.grey[400]),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                            ],
                           ),
-
-                          Text(
-                            widget.time,
-                            style: TextStyle(color: Colors.grey[400]),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          // message
-                          Text(widget.message),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                        ],
-                      ),
+                        ),
+                        // message
+                        Text(widget.message),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                      ],
                     ),
                   ),
                   //投稿のdelete button
