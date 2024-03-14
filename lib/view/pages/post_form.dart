@@ -35,7 +35,7 @@ class _PostFormState extends State<PostForm> {
         },
       );
     }
-    Navigator.of(context).pop();
+    Navigator.pop(context, true);
     // textfieldをクリアする
     setState(() {
       _textEditingController.clear();

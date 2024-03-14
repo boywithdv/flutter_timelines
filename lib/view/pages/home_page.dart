@@ -178,8 +178,9 @@ class _HomePageState extends State<HomePage> {
             builder: (BuildContext context) => PostForm(),
           ),
         ),
-        label: const Icon(
+        label: Icon(
           Icons.add,
+          color: Theme.of(context).colorScheme.onSecondary,
         ),
       ),
     );
