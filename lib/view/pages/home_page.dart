@@ -16,9 +16,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String postid = "";
+  List<WallPost> posts = [];
+
   final currentUser = FirebaseAuth.instance.currentUser!;
   //textController
   final textController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    getLoading(); // 初期表示時にデータを取得
+  }
+
   //sign user logout
   void signOut() {
     setState(() {
@@ -77,14 +85,29 @@ class _HomePageState extends State<HomePage> {
     // データベースから最新の投稿内容を取得する場合の例
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('UserPosts')
-        .orderBy("TimeStamp", descending: false)
+        .orderBy("TimeStamp", descending: true)
         .get();
-    //未実装であり、今後追加していく予定
 
     // 新しい情報を反映させるためにStateを更新する
     setState(() {
-      // ここで新しい情報を反映させる処理を追加する
-      // 例: 新しい投稿内容を変数に保存するなど
+      // snapshotのデータを使ってUIを更新する
+      // ここでは新しい投稿内容をStateにセットしてUIを再構築する
+      // 例: 投稿内容を新しいデータで更新する
+      // ただし、UIの更新に関する具体的な処理は、UI構築部分で行う必要があります
+      // 以下は仮の例ですので、実際のデータ構造に合わせて修正してください。
+
+      // snapshotから投稿データを取得し、Stateにセットする
+      posts = snapshot.docs
+          .map((doc) => WallPost(
+                key: Key(doc.id),
+                message: doc['Message'],
+                user: doc['UserEmail'],
+                username: doc['Username'],
+                postId: doc.id,
+                likes: List<String>.from(doc['Likes'] ?? []),
+                time: formatDate(doc['TimeStamp']),
+              ))
+          .toList();
     });
   }
 
@@ -122,39 +145,41 @@ class _HomePageState extends State<HomePage> {
             children: [
               // 投稿
               Expanded(
+                // Expandedウィジェットの構築
                 child: StreamBuilder(
+                  // StreamBuilderの構築
                   stream: FirebaseFirestore.instance
                       .collection('UserPosts')
                       .orderBy("TimeStamp", descending: true)
                       .snapshots(),
                   builder: (context, snapshot) {
-                    if (snapshot.hasData) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ' + snapshot.error.toString());
+                    } else {
+                      posts.clear(); // リストをクリアして最新のデータを追加
+                      for (var doc in snapshot.data!.docs) {
+                        final post = WallPost(
+                          key: Key(doc.id),
+                          message: doc['Message'],
+                          user: doc['UserEmail'],
+                          username: doc['Username'],
+                          postId: doc.id,
+                          likes: List<String>.from(doc['Likes'] ?? []),
+                          time: formatDate(doc['TimeStamp']),
+                        );
+                        posts.add(post); // リストに追加
+                      }
                       return ListView.builder(
-                        itemCount: snapshot.data!.docs.length,
+                        // ListView.builderの構築
+                        itemCount: posts.length, // リストの要素数を指定
                         itemBuilder: (context, index) {
-                          // メッセージ取得
-                          final post = snapshot.data!.docs[index];
-                          postid = post.id;
-                          return WallPost(
-                            // Keyを追加することでいいねの崩れを修正することができる
-                            key: Key(post.id),
-                            message: post['Message'],
-                            user: post['UserEmail'],
-                            username: post['Username'],
-                            postId: post.id,
-                            likes: List<String>.from(post['Likes'] ?? []),
-                            time: formatDate(post['TimeStamp']),
-                          );
+                          // 投稿データを使ってUIを構築する
+                          return posts[index];
                         },
                       );
-                    } else if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Error: ' + snapshot.error.toString()),
-                      );
                     }
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
                   },
                 ),
               ),

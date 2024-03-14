@@ -11,6 +11,7 @@ import 'package:flutter_timelines/view/components/comment_button.dart';
 import 'package:flutter_timelines/view/components/delete_button.dart';
 import 'package:flutter_timelines/view/components/like_button.dart';
 import 'package:flutter_timelines/view/pages/post_page.dart';
+import 'package:flutter_timelines/view/pages/user_profile_page.dart';
 
 class WallPost extends StatefulWidget {
   final String message;
@@ -59,7 +60,7 @@ class _WallPostState extends State<WallPost> {
     });
   }
 
-  // toggle like
+  // いいねを押下する
   void toggleLike() {
     setState(() {
       isLiked = !isLiked;
@@ -80,7 +81,7 @@ class _WallPostState extends State<WallPost> {
     }
   }
 
-  // add a comment
+  // コメントの追加をする
   void addComment(String commentText) async {
     //get the user's email address
     final userDataSnapshot = await FirebaseFirestore.instance
@@ -109,7 +110,7 @@ class _WallPostState extends State<WallPost> {
     });
   }
 
-  // show a dialog box for adding comment
+  // コメントダイアログを表示する
   void showCommentDialog() {
     showDialog(
       context: context,
@@ -147,7 +148,8 @@ class _WallPostState extends State<WallPost> {
     );
   }
 
-  void openTestPage() async {
+  //投稿内容の詳細画面に遷移する
+  void openPostPage() async {
     // データを更新したい場合はNavigator.push()を非同期で実行する
 
     final updatedData = await Navigator.push(
@@ -172,7 +174,7 @@ class _WallPostState extends State<WallPost> {
     }
   }
 
-  //delete a post
+  //投稿の削除を行う
   void deletePost() {
     //show a dialog box asking for confirmation before deleting the post
     showDialog(
@@ -209,10 +211,36 @@ class _WallPostState extends State<WallPost> {
     );
   }
 
+  //投稿したユーザのプロフィール画面に遷移する
+  void userProfilePageNavigation() async {
+    // データを更新したい場合はNavigator.push()を非同期で実行する
+
+    final updatedData = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UserProfilePage(
+          message: widget.message,
+          user: widget.username,
+          email: widget.user,
+          time: widget.time,
+          postId: widget.postId,
+          likes: widget.likes,
+        ),
+      ),
+    );
+    // データを更新
+    if (updatedData != null) {
+      setState(() {
+        // TestPageから戻ってきたlikesのデータを反映
+        widget.likes = updatedData;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: openTestPage,
+      onTap: openPostPage,
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primary,
@@ -239,29 +267,32 @@ class _WallPostState extends State<WallPost> {
                   children: [
                     // group of text (message + user email )
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.username,
-                            style: TextStyle(color: Colors.grey[900]),
-                          ),
-                          Text(
-                            widget.time,
-                            style: TextStyle(color: Colors.grey[400]),
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          // メッセージ
-                          Padding(
-                            padding: EdgeInsets.only(left: 10),
-                            child: Text(
-                              widget.message,
-                              softWrap: true,
+                      child: GestureDetector(
+                        onTap: userProfilePageNavigation,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.username,
+                              style: TextStyle(color: Colors.grey[900]),
                             ),
-                          ),
-                        ],
+                            Text(
+                              widget.time,
+                              style: TextStyle(color: Colors.grey[400]),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            // メッセージ
+                            Padding(
+                              padding: EdgeInsets.only(left: 10),
+                              child: Text(
+                                widget.message,
+                                softWrap: true,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     //delete button

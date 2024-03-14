@@ -1,20 +1,35 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_timelines/helper/helper_methods.dart';
 import 'package:flutter_timelines/view/components/text_box.dart';
 import 'package:flutter_timelines/view/components/wall_post.dart';
+import 'package:flutter_timelines/view/pages/home_page.dart';
 import 'package:flutter_timelines/view/pages/post_form.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class ProfilePage extends StatefulWidget {
+class UserProfilePage extends StatefulWidget {
+  final String message;
+  final String email;
+  final String user;
+  final String time;
   final String postId;
-  const ProfilePage({super.key, required this.postId});
+  List<String>? likes;
+
+  UserProfilePage(
+      {super.key,
+      required this.message,
+      required this.email,
+      required this.user,
+      required this.time,
+      required this.postId,
+      this.likes});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<UserProfilePage> createState() => _UserProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _UserProfilePageState extends State<UserProfilePage> {
   String postid = "";
   //textController
   final textController = TextEditingController();
@@ -64,7 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
               // update firestore
               if (field == 'username') {
                 await usersCollectionUpdateName
-                    .where('UserEmail', isEqualTo: currentUser.email)
+                    .where('UserEmail', isEqualTo: widget.email)
                     .get()
                     .then(
                   (querySnapshot) {
@@ -77,13 +92,13 @@ class _ProfilePageState extends State<ProfilePage> {
                 );
                 await FirebaseFirestore.instance
                     .collection('Users')
-                    .doc(currentUser.email)
+                    .doc(widget.email)
                     .update({'username': newValue});
                 updateCommentsWithNewUsername(newValue);
               } else if (field == 'bio') {
                 await FirebaseFirestore.instance
                     .collection('Users')
-                    .doc(currentUser.email)
+                    .doc(widget.email)
                     .update({'bio': newValue});
               }
             },
@@ -119,7 +134,25 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void backToHomePage() {
     // 戻る際にNavigator.pop()の引数として更新されたデータを渡す
-    Navigator.pop(context, true);
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => HomePage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          var begin = Offset(-1.0, 0.0);
+          var end = Offset.zero;
+          var curve = Curves.ease;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -141,7 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('Users')
-                  .doc(currentUser.email)
+                  .doc(widget.email)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -181,14 +214,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         text: userData['username'],
                         sectionName: 'ニックネーム',
                         onPressed: () => editField('username'),
-                        email: currentUser.email,
+                        email: widget.email,
                       ),
                       //bio
                       CustomTextBox(
                         text: userData['bio'],
                         sectionName: '自己紹介',
                         onPressed: () => editField('bio'),
-                        email: currentUser.email,
+                        email: widget.email,
                       ),
                       const SizedBox(
                         height: 50,
@@ -206,7 +239,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('UserPosts')
-                            .where('UserEmail', isEqualTo: currentUser.email)
+                            .where('UserEmail', isEqualTo: widget.email)
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {

@@ -1,14 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextBox extends StatelessWidget {
   final String text;
   final String sectionName;
   final void Function()? onPressed;
-  const CustomTextBox(
+  final String? email;
+  CustomTextBox(
       {super.key,
       required this.text,
       required this.sectionName,
-      required this.onPressed});
+      required this.onPressed,
+      this.email});
+  final currentUser = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +37,15 @@ class CustomTextBox extends StatelessWidget {
                 ),
               ),
               //edit button
-              IconButton(
-                onPressed: onPressed,
-                icon: Icon(
-                  Icons.settings,
-                  color: Colors.grey[400],
-                ),
-              )
+              currentUser.email == email
+                  ? IconButton(
+                      onPressed: onPressed,
+                      icon: Icon(
+                        Icons.settings,
+                        color: Colors.grey[400],
+                      ),
+                    )
+                  : SizedBox()
             ],
           ),
           // text

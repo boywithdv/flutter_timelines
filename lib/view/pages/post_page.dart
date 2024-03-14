@@ -8,6 +8,7 @@ import 'package:flutter_timelines/view/components/comment_button.dart';
 import 'package:flutter_timelines/view/components/delete_button.dart';
 import 'package:flutter_timelines/view/components/like_button.dart';
 import 'package:flutter_timelines/view/pages/home_page.dart';
+import 'package:flutter_timelines/view/pages/user_profile_page.dart';
 
 class PostPage extends StatefulWidget {
   final String message;
@@ -228,6 +229,31 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
+  void userProfilePageNavigation() async {
+    // データを更新したい場合はNavigator.push()を非同期で実行する
+
+    final updatedData = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UserProfilePage(
+          message: widget.message,
+          user: widget.user,
+          email: widget.email,
+          time: widget.time,
+          postId: widget.postId,
+          likes: widget.likes,
+        ),
+      ),
+    );
+    // データを更新
+    if (updatedData != null) {
+      setState(() {
+        // TestPageから戻ってきたlikesのデータを反映
+        widget.likes = updatedData;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -252,27 +278,30 @@ class _PostPageState extends State<PostPage> {
                 children: [
                   // group of text (message + user email )
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.user,
-                          style: TextStyle(color: Colors.grey[900]),
-                        ),
+                    child: GestureDetector(
+                      onTap: userProfilePageNavigation,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.user,
+                            style: TextStyle(color: Colors.grey[900]),
+                          ),
 
-                        Text(
-                          widget.time,
-                          style: TextStyle(color: Colors.grey[400]),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        // message
-                        Text(widget.message),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                      ],
+                          Text(
+                            widget.time,
+                            style: TextStyle(color: Colors.grey[400]),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          // message
+                          Text(widget.message),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   //投稿のdelete button
