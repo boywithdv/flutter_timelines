@@ -267,32 +267,37 @@ class _WallPostState extends State<WallPost> {
                   children: [
                     // group of text (message + user email )
                     Expanded(
-                      child: GestureDetector(
-                        onTap: userProfilePageNavigation,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.username,
-                              style: TextStyle(color: Colors.grey[900]),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: userProfilePageNavigation,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.username,
+                                  style: TextStyle(color: Colors.grey[900]),
+                                ),
+                                Text(
+                                  widget.time,
+                                  style: TextStyle(color: Colors.grey[400]),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                              ],
                             ),
-                            Text(
-                              widget.time,
-                              style: TextStyle(color: Colors.grey[400]),
+                          ),
+                          // メッセージ
+                          Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Text(
+                              widget.message,
+                              softWrap: true,
                             ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            // メッセージ
-                            Padding(
-                              padding: EdgeInsets.only(left: 10),
-                              child: Text(
-                                widget.message,
-                                softWrap: true,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                     //delete button
