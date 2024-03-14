@@ -43,7 +43,10 @@ class CustomTextBox extends StatelessWidget {
             ],
           ),
           // text
-          Text(text),
+          Padding(
+            padding: EdgeInsets.only(right: 15),
+            child: Text(text),
+          ),
         ],
       ),
     );

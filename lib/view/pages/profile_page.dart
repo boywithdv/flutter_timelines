@@ -146,10 +146,10 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: backToHomePage,
         ),
-        title: Text(
+        title: const Text(
           'ProfilePage',
         ),
       ),
@@ -228,7 +228,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           if (snapshot.hasData) {
                             return ListView.builder(
                               shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
                               itemCount: snapshot.data!.docs.length,
                               itemBuilder: (context, index) {
                                 // メッセージ取得
