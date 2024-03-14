@@ -5,6 +5,7 @@ import 'package:flutter_timelines/helper/helper_methods.dart';
 import 'package:flutter_timelines/view/components/text_box.dart';
 import 'package:flutter_timelines/view/components/wall_post.dart';
 import 'package:flutter_timelines/view/pages/home_page.dart';
+import 'package:flutter_timelines/view/pages/post_form.dart';
 
 class ProfilePage extends StatefulWidget {
   final String postId;
@@ -236,6 +237,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 postid = post.id;
 
                                 return WallPost(
+                                  key: Key(post.id),
                                   message: post['Message'],
                                   user: post['UserEmail'],
                                   username: post['Username'],
@@ -270,6 +272,19 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            fullscreenDialog: true,
+            builder: (BuildContext context) => PostForm(),
+          ),
+        ),
+        label: Icon(
+          Icons.add,
+          color: Theme.of(context).colorScheme.onSecondary,
+        ),
       ),
     );
   }
