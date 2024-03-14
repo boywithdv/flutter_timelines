@@ -92,10 +92,6 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       // snapshotのデータを使ってUIを更新する
       // ここでは新しい投稿内容をStateにセットしてUIを再構築する
-      // 例: 投稿内容を新しいデータで更新する
-      // ただし、UIの更新に関する具体的な処理は、UI構築部分で行う必要があります
-      // 以下は仮の例ですので、実際のデータ構造に合わせて修正してください。
-
       // snapshotから投稿データを取得し、Stateにセットする
       posts = snapshot.docs
           .map((doc) => WallPost(
