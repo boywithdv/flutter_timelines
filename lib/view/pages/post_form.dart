@@ -73,32 +73,4 @@ class _PostFormState extends State<PostForm> {
       ),
     );
   }
-
-  void _submitPost() {
-    // ここに投稿の送信処理を記述
-    String postContent = _textEditingController.text;
-    print('Submitting post: $postContent');
-    // 送信後の処理を追加することもできます
-    // 例: ダイアログを表示してユーザーに送信完了を通知する
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Post Submitted'),
-          content: Text('Your post has been submitted successfully.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-    // 送信後に入力フィールドをクリアする
-    _textEditingController.clear();
-  }
 }
