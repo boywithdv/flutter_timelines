@@ -198,13 +198,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       //username
                       CustomTextBox(
                         text: userData['username'],
-                        sectionName: 'ユーザー名',
+                        sectionName: 'ニックネーム',
                         onPressed: () => editField('username'),
                       ),
                       //bio
                       CustomTextBox(
                         text: userData['bio'],
-                        sectionName: 'bio',
+                        sectionName: '自己紹介',
                         onPressed: () => editField('bio'),
                       ),
                       const SizedBox(
