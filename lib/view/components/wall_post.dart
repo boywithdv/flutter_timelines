@@ -229,12 +229,6 @@ class _WallPostState extends State<WallPost> {
       ),
     );
     // データを更新
-    if (updatedData != null) {
-      setState(() {
-        // TestPageから戻ってきたlikesのデータを反映
-        widget.likes = updatedData;
-      });
-    }
   }
 
   @override
