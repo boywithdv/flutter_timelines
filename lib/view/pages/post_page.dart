@@ -229,7 +229,7 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
-  void userProfilePageNavigation() async {
+  void userProfilePageNavigation() {
     // データを更新したい場合はNavigator.push()を非同期で実行する
     Navigator.push(
       context,
