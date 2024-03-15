@@ -16,7 +16,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   String postid = "";
-  //textController
+  List<WallPost> posts = []; //textController
   final textController = TextEditingController();
   // user
   final currentUser = FirebaseAuth.instance.currentUser!;
@@ -24,6 +24,12 @@ class _ProfilePageState extends State<ProfilePage> {
   final usersCollection = FirebaseFirestore.instance.collection('Users');
   final usersCollectionUpdateName =
       FirebaseFirestore.instance.collection('UserPosts');
+  @override
+  void initState() {
+    super.initState();
+    getLoading(); // 初期表示時にデータを取得
+  }
+
   // edit field
   Future<void> editField(String field) async {
     String newValue = "";
@@ -115,6 +121,41 @@ class _ProfilePageState extends State<ProfilePage> {
         });
       }
     }
+  }
+
+  Future<void> getLoading() async {
+    // 新しい情報を取得する処理をここに追加する
+    // 例: データベースから最新の投稿内容を取得する
+
+    // データベースから最新の投稿内容を取得する場合の例
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('UserPosts')
+        .where('UserEmail', isEqualTo: currentUser.email)
+        .get();
+
+    // 新しい情報を反映させるためにStateを更新する
+    setState(
+      () {
+        // snapshotのデータを使ってUIを更新する
+        // ここでは新しい投稿内容をStateにセットしてUIを再構築する
+        // snapshotから投稿データを取得し、Stateにセットする
+        posts = snapshot.docs
+            .map(
+              (doc) => WallPost(
+                key: Key(doc.id),
+                message: doc['Message'],
+                user: doc['UserEmail'],
+                username: doc['Username'],
+                postId: doc.id,
+                likes: List<String>.from(doc['Likes'] ?? []),
+                time: formatDate(
+                  doc['TimeStamp'],
+                ),
+              ),
+            )
+            .toList();
+      },
+    );
   }
 
   void backToHomePage() {

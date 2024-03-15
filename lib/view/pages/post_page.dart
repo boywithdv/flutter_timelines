@@ -60,23 +60,7 @@ class _PostPageState extends State<PostPage> {
 // backToHomePageメソッドを追加
   void backToHomePage() {
     // 戻る際にNavigator.pop()の引数として更新されたデータを渡す
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => HomePage(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          var begin = Offset(-1.0, 0.0);
-          var end = Offset.zero;
-          var curve = Curves.ease;
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        },
-      ),
-    );
+    Navigator.pop(context, true);
   }
 
 // いいねボタンのtoggleLikeメソッドを修正
@@ -126,6 +110,7 @@ class _PostPageState extends State<PostPage> {
           "CommentText": commentText,
           "CommentedBy": username,
           "CommentedUserEmail": currentUser.email,
+          'Likes': [],
           "CommentTime": Timestamp.now()
         },
       );
@@ -389,6 +374,7 @@ class _PostPageState extends State<PostPage> {
                           post['CommentTime'],
                         ),
                         commentUserEmail: post['CommentedUserEmail'],
+                        likes: List<String>.from(post['Likes'] ?? []),
                       );
                     },
                   );

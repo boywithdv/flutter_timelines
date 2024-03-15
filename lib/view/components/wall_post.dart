@@ -103,6 +103,7 @@ class _WallPostState extends State<WallPost> {
         "CommentText": commentText,
         "CommentedBy": username,
         "CommentedUserEmail": currentUser.email,
+        'Likes': [],
 
         "CommentTime": Timestamp.now() //remember to format this when displaying
       });
@@ -165,13 +166,6 @@ class _WallPostState extends State<WallPost> {
         ),
       ),
     );
-    // データを更新
-    if (updatedData != null) {
-      setState(() {
-        // TestPageから戻ってきたlikesのデータを反映
-        widget.likes = updatedData;
-      });
-    }
   }
 
   //投稿の削除を行う

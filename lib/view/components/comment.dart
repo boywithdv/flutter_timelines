@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_timelines/view/components/delete_button.dart';
+import 'package:flutter_timelines/view/components/like_button.dart';
 
 class Comment extends StatefulWidget {
   final String text;
@@ -10,9 +11,11 @@ class Comment extends StatefulWidget {
   final String user;
   final String time;
   final String commentUserEmail;
+  List<String> likes;
+
   final void Function()? resetCommentCounter;
 
-  const Comment({
+  Comment({
     super.key,
     required this.text,
     required this.user,
@@ -21,6 +24,7 @@ class Comment extends StatefulWidget {
     required this.commentUserEmail,
     required this.wallPostId,
     this.resetCommentCounter,
+    required this.likes,
   });
 
   @override
@@ -30,10 +34,12 @@ class Comment extends StatefulWidget {
 class _CommentState extends State<Comment> {
   final currentUser = FirebaseAuth.instance.currentUser!;
   int commentCount = 0;
+  bool isLiked = false;
 
   @override
   void initState() {
     super.initState();
+    isLiked = widget.likes.contains(currentUser.email);
     fetchCommentCount();
   }
 
@@ -44,6 +50,29 @@ class _CommentState extends State<Comment> {
         .collection('Comments')
         .get();
     commentCount = querySnapshot.size;
+  }
+
+  void toggleLike() {
+    setState(() {
+      isLiked = !isLiked;
+    });
+    //access the document is Firebase
+    DocumentReference postRef = FirebaseFirestore.instance
+        .collection('UserPosts')
+        .doc(widget.wallPostId)
+        .collection('Comments')
+        .doc(widget.commentedPostId);
+    if (isLiked) {
+      //if the post is now liked, add the user's email to the 'Likes' field
+      postRef.update({
+        'Likes': FieldValue.arrayUnion([currentUser.email])
+      });
+    } else {
+      //if the post is now unliked, remove the user's email from the 'Likes' field
+      postRef.update({
+        'Likes': FieldValue.arrayRemove([currentUser.email])
+      });
+    }
   }
 
   //delete a post
@@ -109,7 +138,7 @@ class _CommentState extends State<Comment> {
         ],
       ),
       margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.all(20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,13 +153,39 @@ class _CommentState extends State<Comment> {
                 ),
                 Text(
                   widget.time,
-                  style: TextStyle(color: Colors.grey[400]),
+                  style: TextStyle(color: Colors.grey[400], fontSize: 10),
                 ),
+
                 //comment
-                Text(
-                  widget.text,
-                  softWrap: true,
-                )
+                Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text(
+                    widget.text,
+                    softWrap: true,
+                  ),
+                ),
+                Divider(
+                  height: 8,
+                  thickness: 1,
+                  indent: 4,
+                  endIndent: 4,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      LikeButton(isLiked: isLiked, onTap: toggleLike),
+                      Text(
+                        widget.likes.length.toString(),
+                        style: TextStyle(
+                          color: Colors.grey[500],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
