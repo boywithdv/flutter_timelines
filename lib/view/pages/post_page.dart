@@ -231,17 +231,15 @@ class _PostPageState extends State<PostPage> {
 
   void userProfilePageNavigation() async {
     // データを更新したい場合はNavigator.push()を非同期で実行する
-
-    final updatedData = await Navigator.push(
+    Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => UserProfilePage(
+        builder: (BuildContext context) => UserProfilePage(
           message: widget.message,
-          user: widget.user,
           email: widget.email,
+          user: widget.user,
           time: widget.time,
           postId: widget.postId,
-          likes: widget.likes,
         ),
       ),
     );
