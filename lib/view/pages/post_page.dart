@@ -56,7 +56,6 @@ class _PostPageState extends State<PostPage> {
     });
   }
 
-// PostPageのStateクラス内
 // backToHomePageメソッドを追加
   void backToHomePage() {
     // 戻る際にNavigator.pop()の引数として更新されたデータを渡す
