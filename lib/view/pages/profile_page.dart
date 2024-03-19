@@ -70,7 +70,7 @@ class _ProfilePageState extends State<ProfilePage> {
               // update firestore
               if (field == 'username') {
                 await usersCollectionUpdateName
-                    .where('UserEmail', isEqualTo: currentUser.email)
+                    .where('UserId', isEqualTo: currentUser.uid)
                     .get()
                     .then(
                   (querySnapshot) {
@@ -83,13 +83,13 @@ class _ProfilePageState extends State<ProfilePage> {
                 );
                 await FirebaseFirestore.instance
                     .collection('Users')
-                    .doc(currentUser.email)
+                    .doc(currentUser.uid)
                     .update({'username': newValue});
                 updateCommentsWithNewUsername(newValue);
               } else if (field == 'bio') {
                 await FirebaseFirestore.instance
                     .collection('Users')
-                    .doc(currentUser.email)
+                    .doc(currentUser.uid)
                     .update({'bio': newValue});
               }
             },
@@ -130,7 +130,7 @@ class _ProfilePageState extends State<ProfilePage> {
     // データベースから最新の投稿内容を取得する場合の例
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('UserPosts')
-        .where('UserEmail', isEqualTo: currentUser.email)
+        .where('UserId', isEqualTo: currentUser.uid)
         .get();
 
     // 新しい情報を反映させるためにStateを更新する
@@ -151,6 +151,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 time: formatDate(
                   doc['TimeStamp'],
                 ),
+                uid: doc['UserId'],
               ),
             )
             .toList();
@@ -182,7 +183,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('Users')
-                  .doc(currentUser.email)
+                  .doc(currentUser.uid)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -247,7 +248,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('UserPosts')
-                            .where('UserEmail', isEqualTo: currentUser.email)
+                            .where('UserId', isEqualTo: currentUser.uid)
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
@@ -263,11 +264,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                 return WallPost(
                                   key: Key(post.id),
                                   message: post['Message'],
-                                  user: post['UserEmail'],
+                                  user: post['UserId'],
                                   username: post['Username'],
                                   postId: post.id,
                                   likes: List<String>.from(post['Likes'] ?? []),
                                   time: formatDate(post['TimeStamp']),
+                                  uid: post['UserId'],
                                 );
                               },
                             );

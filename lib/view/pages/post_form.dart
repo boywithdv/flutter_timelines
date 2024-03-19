@@ -19,7 +19,7 @@ class _PostFormState extends State<PostForm> {
       String username = '';
       DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
           .collection('Users')
-          .doc(currentUser.email)
+          .doc(currentUser.uid)
           .get();
       if (userSnapshot.exists) {
         username = userSnapshot.get('username');
@@ -27,6 +27,7 @@ class _PostFormState extends State<PostForm> {
 
       FirebaseFirestore.instance.collection('UserPosts').add(
         {
+          'UserId': currentUser.uid,
           'UserEmail': currentUser.email,
           'Username': username,
           'Message': _textEditingController.text,

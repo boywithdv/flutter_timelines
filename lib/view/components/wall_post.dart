@@ -14,6 +14,7 @@ import 'package:flutter_timelines/view/pages/post_page.dart';
 import 'package:flutter_timelines/view/pages/user_profile_page.dart';
 
 class WallPost extends StatefulWidget {
+  final String uid;
   final String message;
   final String user;
   final String username;
@@ -28,6 +29,7 @@ class WallPost extends StatefulWidget {
     required this.likes,
     required this.time,
     required this.username,
+    required this.uid,
   });
 
   @override
@@ -86,7 +88,7 @@ class _WallPostState extends State<WallPost> {
     //get the user's email address
     final userDataSnapshot = await FirebaseFirestore.instance
         .collection('Users')
-        .doc(currentUser.email)
+        .doc(currentUser.uid)
         .get();
 
     // ユーザ名を取得
@@ -101,10 +103,10 @@ class _WallPostState extends State<WallPost> {
           .collection('Comments')
           .add({
         "CommentText": commentText,
+        "CommentedUserId": currentUser.uid,
         "CommentedBy": username,
         "CommentedUserEmail": currentUser.email,
         'Likes': [],
-
         "CommentTime": Timestamp.now() //remember to format this when displaying
       });
       fetchCommentCount();
@@ -163,6 +165,7 @@ class _WallPostState extends State<WallPost> {
           time: widget.time,
           postId: widget.postId,
           likes: widget.likes,
+          uid: widget.uid,
         ),
       ),
     );
@@ -216,9 +219,8 @@ class _WallPostState extends State<WallPost> {
           message: widget.message,
           user: widget.username,
           email: widget.user,
-          time: widget.time,
-          postId: widget.postId,
           likes: widget.likes,
+          uid: widget.uid,
         ),
       ),
     );
@@ -289,7 +291,7 @@ class _WallPostState extends State<WallPost> {
                       ),
                     ),
                     //delete button
-                    if (widget.user == currentUser.email)
+                    if (widget.uid == currentUser.uid)
                       DeleteButton(
                         onTap: deletePost,
                       )

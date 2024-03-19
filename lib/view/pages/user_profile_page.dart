@@ -9,10 +9,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class UserProfilePage extends StatefulWidget {
   final String message;
+  final String uid;
   final String email;
   final String user;
-  final String time;
-  final String postId;
   List<String>? likes;
 
   UserProfilePage(
@@ -20,9 +19,8 @@ class UserProfilePage extends StatefulWidget {
       required this.message,
       required this.email,
       required this.user,
-      required this.time,
-      required this.postId,
-      this.likes});
+      this.likes,
+      required this.uid});
 
   @override
   State<UserProfilePage> createState() => _UserProfilePageState();
@@ -78,7 +76,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               // update firestore
               if (field == 'username') {
                 await usersCollectionUpdateName
-                    .where('UserEmail', isEqualTo: widget.email)
+                    .where('UserId', isEqualTo: widget.uid)
                     .get()
                     .then(
                   (querySnapshot) {
@@ -91,13 +89,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 );
                 await FirebaseFirestore.instance
                     .collection('Users')
-                    .doc(widget.email)
+                    .doc(widget.uid)
                     .update({'username': newValue});
                 updateCommentsWithNewUsername(newValue);
               } else if (field == 'bio') {
                 await FirebaseFirestore.instance
                     .collection('Users')
-                    .doc(widget.email)
+                    .doc(widget.uid)
                     .update({'bio': newValue});
               }
             },
@@ -145,8 +143,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: backToHomePage,
         ),
-        title: const Text(
-          'ProfilePage',
+        title: Text(
+          widget.user,
         ),
       ),
       body: Column(
@@ -155,7 +153,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             child: StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('Users')
-                  .doc(widget.email)
+                  .doc(widget.uid)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -176,7 +174,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       ),
                       //user email
                       Text(
-                        currentUser.email!,
+                        widget.email,
                         textAlign: TextAlign.center,
                         style: TextStyle(color: Colors.grey[700]),
                       ),
@@ -241,6 +239,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                   postId: post.id,
                                   likes: List<String>.from(post['Likes'] ?? []),
                                   time: formatDate(post['TimeStamp']),
+                                  uid: post['UserId'],
                                 );
                               },
                             );

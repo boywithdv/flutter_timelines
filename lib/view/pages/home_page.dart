@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
       String username = '';
       DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
           .collection('Users')
-          .doc(currentUser.email)
+          .doc(currentUser.uid)
           .get();
       if (userSnapshot.exists) {
         username = userSnapshot.get('username');
@@ -48,6 +48,7 @@ class _HomePageState extends State<HomePage> {
       FirebaseFirestore.instance.collection('UserPosts').add(
         {
           'UserEmail': currentUser.email,
+          'UserId': currentUser.uid,
           'Username': username,
           'Message': textController.text,
           'TimeStamp': Timestamp.now(),
@@ -101,6 +102,7 @@ class _HomePageState extends State<HomePage> {
                 postId: doc.id,
                 likes: List<String>.from(doc['Likes'] ?? []),
                 time: formatDate(doc['TimeStamp']),
+                uid: doc['UserId'],
               ))
           .toList();
     });
@@ -163,6 +165,7 @@ class _HomePageState extends State<HomePage> {
                           postId: doc.id,
                           likes: List<String>.from(doc['Likes'] ?? []),
                           time: formatDate(doc['TimeStamp']),
+                          uid: doc['UserId'],
                         );
                         posts.add(post); // リストに追加
                       }

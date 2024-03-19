@@ -11,6 +11,7 @@ class Comment extends StatefulWidget {
   final String user;
   final String time;
   final String commentUserEmail;
+  final void Function()? onTap;
   List<String> likes;
 
   final void Function()? resetCommentCounter;
@@ -25,6 +26,7 @@ class Comment extends StatefulWidget {
     required this.wallPostId,
     this.resetCommentCounter,
     required this.likes,
+    this.onTap,
   });
 
   @override
@@ -147,15 +149,24 @@ class _CommentState extends State<Comment> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  widget.user,
-                  style: TextStyle(color: Colors.grey[700]),
+                GestureDetector(
+                  onTap: widget.onTap,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.user,
+                        style: TextStyle(
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      Text(
+                        widget.time,
+                        style: TextStyle(color: Colors.grey[400], fontSize: 10),
+                      ),
+                    ],
+                  ),
                 ),
-                Text(
-                  widget.time,
-                  style: TextStyle(color: Colors.grey[400], fontSize: 10),
-                ),
-
                 //comment
                 Padding(
                   padding: EdgeInsets.all(10),

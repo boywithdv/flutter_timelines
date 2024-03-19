@@ -12,6 +12,7 @@ import 'package:flutter_timelines/view/pages/user_profile_page.dart';
 
 class PostPage extends StatefulWidget {
   final String message;
+  final String uid;
   final String user;
   final String email;
   final String time;
@@ -20,6 +21,7 @@ class PostPage extends StatefulWidget {
   PostPage(
       {super.key,
       required this.message,
+      required this.uid,
       required this.user,
       required this.time,
       required this.postId,
@@ -93,7 +95,7 @@ class _PostPageState extends State<PostPage> {
     //get the user's email address
     final userDataSnapshot = await FirebaseFirestore.instance
         .collection('Users')
-        .doc(currentUser.email)
+        .doc(currentUser.uid)
         .get();
     // ユーザ名を取得
     final userData = userDataSnapshot.data() as Map<String, dynamic>;
@@ -106,6 +108,7 @@ class _PostPageState extends State<PostPage> {
           .collection('Comments')
           .add(
         {
+          "CommentedUserId": currentUser.uid,
           "CommentText": commentText,
           "CommentedBy": username,
           "CommentedUserEmail": currentUser.email,
@@ -220,10 +223,23 @@ class _PostPageState extends State<PostPage> {
       MaterialPageRoute(
         builder: (BuildContext context) => UserProfilePage(
           message: widget.message,
+          uid: widget.uid,
           email: widget.email,
           user: widget.user,
-          time: widget.time,
-          postId: widget.postId,
+        ),
+      ),
+    );
+  }
+
+  void commentUserProfilePageNavigation(String email, String uid, String user) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) => UserProfilePage(
+          message: widget.message,
+          email: email,
+          user: user,
+          uid: uid,
         ),
       ),
     );
@@ -359,12 +375,13 @@ class _PostPageState extends State<PostPage> {
                     itemBuilder: (context, index) {
                       // メッセージ取得
                       final post = snapshot.data!.docs[index];
-                      String postid = post.id;
+                      String postId = post.id;
                       return Comment(
                         // Keyを追加することでいいねの崩れを修正することができる
                         key: Key(post.id),
                         text: post['CommentText'],
-                        user: post['CommentedBy'], commentedPostId: postid,
+                        user: post['CommentedBy'],
+                        commentedPostId: postId,
                         wallPostId: widget.postId,
                         resetCommentCounter: () {
                           fetchCommentCount();
@@ -374,6 +391,13 @@ class _PostPageState extends State<PostPage> {
                         ),
                         commentUserEmail: post['CommentedUserEmail'],
                         likes: List<String>.from(post['Likes'] ?? []),
+                        onTap: () {
+                          commentUserProfilePageNavigation(
+                            post['CommentedUserEmail'],
+                            post['CommentedUserId'],
+                            post['CommentedBy'],
+                          );
+                        },
                       );
                     },
                   );
