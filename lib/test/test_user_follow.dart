@@ -29,6 +29,7 @@ class _TestUserFollowState extends State<TestUserFollow> {
   void initState() {
     super.initState();
     isFollow = widget.following.contains(widget.followUid);
+    fetch();
   }
 
   Future<void> fetch() async {
