@@ -90,10 +90,16 @@ class _TestUserFollowState extends State<TestUserFollow> {
                     isFollow =
                         userData!['Following'].contains(widget.followUserEmail);
 
-                    return FollowButton(
-                      isFollow: isFollow,
-                      onTap: toggleFollow,
-                    );
+                    if (currentUser.uid != widget.followUid) {
+                      return FollowButton(
+                        isFollow: isFollow,
+                        onTap: toggleFollow,
+                      );
+                    } else if (currentUser.uid == widget.followUid) {
+                      return SizedBox();
+                    } else {
+                      return CircularProgressIndicator();
+                    }
                   }
                 },
               )
