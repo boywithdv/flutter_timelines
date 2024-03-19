@@ -22,29 +22,13 @@ class TestUserFollow extends StatefulWidget {
 }
 
 class _TestUserFollowState extends State<TestUserFollow> {
-  bool isFollow = false;
+  late bool isFollow;
   final currentUser = FirebaseAuth.instance.currentUser!;
 
   @override
   void initState() {
     super.initState();
-    isFollow = widget.following.contains(widget.followUid);
-    fetch();
-  }
-
-  Future<void> fetch() async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(currentUser.uid)
-        .get();
-    setState(
-      () {
-        var userData = snapshot.data();
-
-        // 現在のユーザーがフォローしているかどうかを判定する
-        isFollow = userData!['Following'].contains(widget.followUid);
-      },
-    );
+    isFollow = widget.following.contains(widget.followUserEmail);
   }
 
   void toggleFollow() {
@@ -55,11 +39,11 @@ class _TestUserFollowState extends State<TestUserFollow> {
         FirebaseFirestore.instance.collection('Users').doc(currentUser.uid);
     if (isFollow) {
       postRef.update({
-        'Following': FieldValue.arrayUnion([widget.followUid])
+        'Following': FieldValue.arrayUnion([widget.followUserEmail])
       });
     } else {
       postRef.update({
-        'Following': FieldValue.arrayRemove([widget.followUid])
+        'Following': FieldValue.arrayRemove([widget.followUserEmail])
       });
     }
   }
@@ -85,14 +69,34 @@ class _TestUserFollowState extends State<TestUserFollow> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  widget.followUserName,
+                  widget.followUserEmail,
                 ),
               ),
-              if (currentUser.uid != widget.followUid)
-                FollowButton(
-                  isFollow: isFollow,
-                  onTap: toggleFollow,
-                )
+              StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection('Users')
+                    .doc(currentUser.uid)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    // Firestoreから現在のユーザーのデータを取得する
+                    var userData = snapshot.data;
+
+                    // 現在のユーザーがフォローしているかどうかを判定する
+                    isFollow =
+                        userData!['Following'].contains(widget.followUserEmail);
+
+                    return FollowButton(
+                      isFollow: isFollow,
+                      onTap: toggleFollow,
+                    );
+                  }
+                },
+              )
             ],
           ),
         ),
