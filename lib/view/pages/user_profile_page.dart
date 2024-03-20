@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_timelines/helper/helper_methods.dart';
+import 'package:flutter_timelines/view/components/follow_button.dart';
 import 'package:flutter_timelines/view/components/text_box.dart';
 import 'package:flutter_timelines/view/components/wall_post.dart';
 import 'package:flutter_timelines/view/pages/post_form.dart';
@@ -27,6 +28,7 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
+  bool isFollowing = false;
   String postid = "";
   //textController
   final textController = TextEditingController();
@@ -36,6 +38,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   final usersCollection = FirebaseFirestore.instance.collection('Users');
   final usersCollectionUpdateName =
       FirebaseFirestore.instance.collection('UserPosts');
+
   // edit field
   Future<void> editField(String field) async {
     String newValue = "";
@@ -109,6 +112,27 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+    checkFollowing();
+  }
+
+  void checkFollowing() async {
+    DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('Users')
+        .doc(currentUser.uid)
+        .get();
+    var userData = snapshot.data();
+    if (userData != null && userData['Following'] != null) {
+      setState(() {
+        isFollowing =
+            (userData['Following'] as List<dynamic>).contains(widget.email);
+      });
+    }
+  }
+
   // プロフィール名を変更した後に呼び出される関数
   void updateCommentsWithNewUsername(String newUsername) async {
     // 現在のユーザーがログインしているか確認
@@ -126,6 +150,34 @@ class _UserProfilePageState extends State<UserProfilePage> {
           'CommentedBy': newUsername, // 新しいユーザ名で更新
         });
       }
+    }
+  }
+
+  void follow_button() {
+    setState(() {
+      isFollowing = !isFollowing;
+    });
+    DocumentReference followRef =
+        FirebaseFirestore.instance.collection('Users').doc(currentUser.uid);
+    if (isFollowing) {
+      followRef.update({
+        'Following': FieldValue.arrayUnion([widget.email])
+      });
+    } else {
+      followRef.update({
+        'Following': FieldValue.arrayRemove([widget.email])
+      });
+    }
+    DocumentReference followerRef =
+        FirebaseFirestore.instance.collection('Users').doc(widget.uid);
+    if (isFollowing) {
+      followerRef.update({
+        'Followers': FieldValue.arrayUnion([currentUser.email])
+      });
+    } else {
+      followerRef.update({
+        'Followers': FieldValue.arrayRemove([currentUser.email])
+      });
     }
   }
 
@@ -205,11 +257,32 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       const SizedBox(
                         height: 50,
                       ),
+                      if (currentUser.uid != widget.uid)
+                        Container(
+                          height: 50,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Container(
+                                color: Colors.red,
+                                width: 50,
+                                height: 50,
+                              ),
+                              Container(
+                                width: 140,
+                                child: FollowButton(
+                                  isFollow: isFollowing,
+                                  onTap: follow_button,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       //user posts
                       Padding(
                         padding: const EdgeInsets.only(left: 25.0),
                         child: Text(
-                          "My Posts",
+                          "Posts",
                           style: TextStyle(
                             color: Colors.grey[600],
                           ),

@@ -15,7 +15,7 @@ class FollowButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: isFollow
-          ? TextButton.icon(
+          ? OutlinedButton.icon(
               icon: Icon(
                 Icons.person_outline_outlined,
                 color: Theme.of(context).colorScheme.onSecondary,
@@ -23,9 +23,10 @@ class FollowButton extends StatelessWidget {
               label: Text(
                 "Follow Now",
                 style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 10,
-                    color: Theme.of(context).colorScheme.onSecondary),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 10,
+                  color: Theme.of(context).colorScheme.onSecondary,
+                ),
               ),
               onPressed: followButtonOnTap,
             )
