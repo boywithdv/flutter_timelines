@@ -301,22 +301,30 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       ),
 
                       Padding(
-                        padding: EdgeInsets.only(top: 15, bottom: 15),
+                        padding: EdgeInsets.only(left: 30, top: 15, bottom: 15),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Text(
-                              "${followingCount} フォロー", // ここにフォロワー数を表示
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Theme.of(context).colorScheme.onPrimary,
+                            Padding(
+                              padding: EdgeInsets.only(left: 10, right: 10),
+                              child: Text(
+                                "${followingCount} フォロー", // ここにフォロワー数を表示
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
                               ),
                             ),
-                            Text(
-                              "${followerCount} フォロワー", // ここにフォロワー数を表示
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Theme.of(context).colorScheme.onPrimary,
+                            Padding(
+                              padding: EdgeInsets.only(left: 10, right: 10),
+                              child: Text(
+                                "${followerCount} フォロワー", // ここにフォロワー数を表示
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
                               ),
                             ),
                           ],
