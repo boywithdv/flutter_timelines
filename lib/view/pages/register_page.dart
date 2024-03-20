@@ -46,7 +46,6 @@ class _RegisterPageState extends State<RegisterPage> {
         email: emailTextController.text,
         password: passwordTextController.text,
       );
-      final currentUser = FirebaseAuth.instance.currentUser!;
       //after creating the user, create a new document in cloud firestore called Users
       FirebaseFirestore.instance
           .collection('Users')
