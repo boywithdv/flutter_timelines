@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_timelines/auth/login_or_register.dart';
-import 'package:flutter_timelines/test/test_page.dart';
+import 'package:flutter_timelines/view/pages/follow_list_page.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
@@ -16,7 +16,7 @@ class AuthPage extends StatelessWidget {
           //user is logged in
           if (snapshot.hasData) {
             //ここが本来はHomePageウィジェットを使用
-            return const TestPage();
+            return const FollowListPage();
           }
           // user is not login
           else {

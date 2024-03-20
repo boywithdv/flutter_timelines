@@ -3,13 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_timelines/view/components/follow_button.dart';
 
-class TestUserFollow extends StatefulWidget {
+class UserFollowComponents extends StatefulWidget {
   final String followUserName;
   final String followUserEmail;
   final String followUid;
   List<String> following;
 
-  TestUserFollow({
+  UserFollowComponents({
     Key? key,
     required this.followUserName,
     required this.following,
@@ -18,10 +18,10 @@ class TestUserFollow extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<TestUserFollow> createState() => _TestUserFollowState();
+  State<UserFollowComponents> createState() => _UserFollowComponentsState();
 }
 
-class _TestUserFollowState extends State<TestUserFollow> {
+class _UserFollowComponentsState extends State<UserFollowComponents> {
   late bool isFollow;
   final currentUser = FirebaseAuth.instance.currentUser!;
 
