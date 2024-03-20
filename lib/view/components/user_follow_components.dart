@@ -35,15 +35,26 @@ class _UserFollowComponentsState extends State<UserFollowComponents> {
     setState(() {
       isFollow = !isFollow;
     });
-    DocumentReference postRef =
+    DocumentReference followRef =
         FirebaseFirestore.instance.collection('Users').doc(currentUser.uid);
     if (isFollow) {
-      postRef.update({
+      followRef.update({
         'Following': FieldValue.arrayUnion([widget.followUserEmail])
       });
     } else {
-      postRef.update({
+      followRef.update({
         'Following': FieldValue.arrayRemove([widget.followUserEmail])
+      });
+    }
+    DocumentReference followerRef =
+        FirebaseFirestore.instance.collection('Users').doc(widget.followUid);
+    if (isFollow) {
+      followerRef.update({
+        'Followers': FieldValue.arrayUnion([currentUser.email])
+      });
+    } else {
+      followerRef.update({
+        'Followers': FieldValue.arrayRemove([currentUser.email])
       });
     }
   }
@@ -69,7 +80,7 @@ class _UserFollowComponentsState extends State<UserFollowComponents> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  widget.followUserEmail,
+                  widget.followUserName,
                 ),
               ),
               StreamBuilder(
