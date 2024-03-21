@@ -6,7 +6,7 @@ import 'package:flutter_timelines/helper/helper_methods.dart';
 import 'package:flutter_timelines/view/components/follow_button.dart';
 import 'package:flutter_timelines/view/components/text_box.dart';
 import 'package:flutter_timelines/view/components/wall_post.dart';
-import 'package:flutter_timelines/view/pages/post_form.dart';
+import 'package:flutter_timelines/view/components/post_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 

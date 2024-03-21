@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_timelines/helper/helper_methods.dart';
 import 'package:flutter_timelines/view/components/custom_drawer.dart';
 import 'package:flutter_timelines/view/components/wall_post.dart';
-import 'package:flutter_timelines/view/pages/post_form.dart';
+import 'package:flutter_timelines/view/components/post_form.dart';
 import 'package:flutter_timelines/view/pages/profile_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -70,9 +70,7 @@ class _HomePageState extends State<HomePage> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ProfilePage(
-          postId: postid,
-        ),
+        builder: (context) => ProfilePage(),
       ),
     );
     await getLoading();

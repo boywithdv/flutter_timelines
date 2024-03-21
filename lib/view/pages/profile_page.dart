@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_timelines/helper/helper_methods.dart';
 import 'package:flutter_timelines/view/components/text_box.dart';
 import 'package:flutter_timelines/view/components/wall_post.dart';
-import 'package:flutter_timelines/view/pages/post_form.dart';
+import 'package:flutter_timelines/view/components/post_form.dart';
 
 class ProfilePage extends StatefulWidget {
-  final String postId;
-  const ProfilePage({super.key, required this.postId});
+  const ProfilePage({super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
