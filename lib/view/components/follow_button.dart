@@ -18,14 +18,14 @@ class FollowButton extends StatelessWidget {
           ? OutlinedButton.icon(
               icon: Icon(
                 Icons.person_outline_outlined,
-                color: Theme.of(context).colorScheme.onSecondary,
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
               label: Text(
                 "Follow Now",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 10,
-                  color: Theme.of(context).colorScheme.onSecondary,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
               onPressed: followButtonOnTap,
