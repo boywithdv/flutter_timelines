@@ -41,6 +41,7 @@ class _LoginPageState extends State<LoginPage> {
         errorTextController.text = "ログインできません😢";
       });
     }
+    FocusScope.of(context).unfocus(); // キーボードを閉じる
   }
 
   //display a dialog message
