@@ -279,7 +279,10 @@ class _PostPageState extends State<PostPage> {
                             children: [
                               Text(
                                 widget.user,
-                                style: TextStyle(color: Colors.grey[900]),
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimary),
                               ),
                               Text(
                                 widget.time,

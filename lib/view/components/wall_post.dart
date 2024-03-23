@@ -209,10 +209,10 @@ class _WallPostState extends State<WallPost> {
   }
 
   //投稿したユーザのプロフィール画面に遷移する
-  void userProfilePageNavigation() async {
+  void userProfilePageNavigation() {
     // データを更新したい場合はNavigator.push()を非同期で実行する
 
-    final updatedData = await Navigator.push(
+    Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => UserProfilePage(
@@ -267,11 +267,16 @@ class _WallPostState extends State<WallPost> {
                               children: [
                                 Text(
                                   widget.username,
-                                  style: TextStyle(color: Colors.grey[900]),
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary),
                                 ),
                                 Text(
                                   widget.time,
-                                  style: TextStyle(color: Colors.grey[400]),
+                                  style: TextStyle(
+                                    color: Colors.grey[400],
+                                  ),
                                 ),
                                 const SizedBox(
                                   height: 15,

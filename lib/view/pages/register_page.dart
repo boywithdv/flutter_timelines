@@ -64,6 +64,8 @@ class _RegisterPageState extends State<RegisterPage> {
           // add any additional fields as needs
         },
       );
+      FirebaseAuth.instance.currentUser!
+          .updateDisplayName(emailTextController.text.split('@')[0]);
       if (context.mounted) Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);

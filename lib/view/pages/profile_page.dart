@@ -68,6 +68,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Navigator.of(context).pop(newValue);
               // update firestore
               if (field == 'username') {
+                FirebaseAuth.instance.currentUser!.updateDisplayName(newValue);
                 await usersCollectionUpdateName
                     .where('UserId', isEqualTo: currentUser.uid)
                     .get()

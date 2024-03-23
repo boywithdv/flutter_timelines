@@ -5,10 +5,12 @@ import 'package:flutter_timelines/controller/following_counter.dart';
 import 'package:flutter_timelines/helper/helper_methods.dart';
 import 'package:flutter_timelines/view/components/follow_button.dart';
 import 'package:flutter_timelines/view/components/text_box.dart';
+import 'package:flutter_timelines/view/components/user_chat_button.dart';
 import 'package:flutter_timelines/view/components/wall_post.dart';
 import 'package:flutter_timelines/view/components/post_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_timelines/view/pages/home_page.dart';
 
 class UserProfilePage extends StatefulWidget {
   final String message;
@@ -301,7 +303,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       ),
 
                       Padding(
-                        padding: EdgeInsets.only(left: 30, top: 15, bottom: 15),
+                        padding: const EdgeInsets.only(
+                            left: 30, top: 15, bottom: 15),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -319,7 +322,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             Padding(
                               padding: EdgeInsets.only(left: 10, right: 10),
                               child: Text(
-                                "${followerCount} フォロワー", // ここにフォロワー数を表示
+                                "$followerCount フォロワー", // ここにフォロワー数を表示
                                 style: TextStyle(
                                   fontSize: 15,
                                   color:
@@ -336,12 +339,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Container(
-                                color: Colors.red,
-                                width: 50,
-                                height: 50,
+                              UserChatButton(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            HomePage()),
+                                  );
+                                },
                               ),
-                              Container(
+                              SizedBox(
                                 width: 140,
                                 child: FollowButton(
                                   isFollow: isFollowing,
