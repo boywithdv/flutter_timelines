@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_timelines/controller/database_service.dart';
 import 'package:flutter_timelines/controller/follower_counter.dart';
 import 'package:flutter_timelines/controller/following_counter.dart';
 import 'package:flutter_timelines/helper/helper_methods.dart';
@@ -342,9 +341,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             children: [
                               UserChatButton(
                                 onTap: () {
-                                  DatabaseService(uid: currentUser.uid)
-                                      .createChat(currentUser.email!,
-                                          currentUser.uid, "thisis");
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

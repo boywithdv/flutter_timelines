@@ -57,9 +57,12 @@ class _HomePageState extends State<HomePage> {
       );
     }
     // textfieldをクリアする
-    setState(() {
-      textController.clear();
-    });
+    if (mounted) {
+      // mounted プロパティを確認する
+      setState(() {
+        textController.clear();
+      });
+    }
   }
 
   //プロフィールページに遷移
@@ -85,25 +88,26 @@ class _HomePageState extends State<HomePage> {
         .collection('UserPosts')
         .orderBy("TimeStamp", descending: true)
         .get();
-
-    // 新しい情報を反映させるためにStateを更新する
-    setState(() {
-      // snapshotのデータを使ってUIを更新する
-      // ここでは新しい投稿内容をStateにセットしてUIを再構築する
-      // snapshotから投稿データを取得し、Stateにセットする
-      posts = snapshot.docs
-          .map((doc) => WallPost(
-                key: Key(doc.id),
-                message: doc['Message'],
-                user: doc['UserEmail'],
-                username: doc['Username'],
-                postId: doc.id,
-                likes: List<String>.from(doc['Likes'] ?? []),
-                time: formatDate(doc['TimeStamp']),
-                uid: doc['UserId'],
-              ))
-          .toList();
-    });
+    if (mounted) {
+      // 新しい情報を反映させるためにStateを更新する
+      setState(() {
+        // snapshotのデータを使ってUIを更新する
+        // ここでは新しい投稿内容をStateにセットしてUIを再構築する
+        // snapshotから投稿データを取得し、Stateにセットする
+        posts = snapshot.docs
+            .map((doc) => WallPost(
+                  key: Key(doc.id),
+                  message: doc['Message'],
+                  user: doc['UserEmail'],
+                  username: doc['Username'],
+                  postId: doc.id,
+                  likes: List<String>.from(doc['Likes'] ?? []),
+                  time: formatDate(doc['TimeStamp']),
+                  uid: doc['UserId'],
+                ))
+            .toList();
+      });
+    }
   }
 
   @override

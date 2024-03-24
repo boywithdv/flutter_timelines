@@ -51,20 +51,23 @@ class _MessageTileState extends State<MessageTile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.sender.toUpperCase(),
+              widget.sender,
               textAlign: TextAlign.start,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onPrimary,
                   letterSpacing: -0.5),
             ),
             const SizedBox(
               height: 8,
             ),
-            Text(widget.message,
-                textAlign: TextAlign.start,
-                style: const TextStyle(fontSize: 16, color: Colors.white))
+            Text(
+              widget.message,
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                  fontSize: 16, color: Theme.of(context).colorScheme.onPrimary),
+            )
           ],
         ),
       ),
