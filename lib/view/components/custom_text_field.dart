@@ -4,14 +4,14 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
-  final Widget prefixIcon;
+  final Widget? prefixIcon;
   final Widget? suffixIcon;
   const CustomTextField({
     super.key,
     required this.controller,
     required this.hintText,
     required this.obscureText,
-    required this.prefixIcon,
+    this.prefixIcon,
     this.suffixIcon,
   });
 

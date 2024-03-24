@@ -1,0 +1,5 @@
+1. senderId = メッセンジャーId
+2. senderEmail = メッセンジャーのメールアドレス
+3. receiverId = 
+4. message = メッセージ
+5. timestamp = タイム時間

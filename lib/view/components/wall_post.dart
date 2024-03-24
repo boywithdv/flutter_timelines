@@ -155,7 +155,7 @@ class _WallPostState extends State<WallPost> {
   void openPostPage() async {
     // データを更新したい場合はNavigator.push()を非同期で実行する
 
-    final updatedData = await Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PostPage(

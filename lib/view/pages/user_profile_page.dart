@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_timelines/controller/database_service.dart';
 import 'package:flutter_timelines/controller/follower_counter.dart';
 import 'package:flutter_timelines/controller/following_counter.dart';
 import 'package:flutter_timelines/helper/helper_methods.dart';
@@ -10,7 +11,7 @@ import 'package:flutter_timelines/view/components/wall_post.dart';
 import 'package:flutter_timelines/view/components/post_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_timelines/view/pages/home_page.dart';
+import 'package:flutter_timelines/test/chat_page.dart';
 
 class UserProfilePage extends StatefulWidget {
   final String message;
@@ -341,11 +342,18 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             children: [
                               UserChatButton(
                                 onTap: () {
+                                  DatabaseService(uid: currentUser.uid)
+                                      .createChat(currentUser.email!,
+                                          currentUser.uid, "thisis");
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            HomePage()),
+                                      builder: (BuildContext context) =>
+                                          ChatPage(
+                                        uid: widget.uid,
+                                        username: widget.user,
+                                      ),
+                                    ),
                                   );
                                 },
                               ),
