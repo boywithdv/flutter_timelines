@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_timelines/controller/follower_counter.dart';
+import 'package:flutter_timelines/controller/following_counter.dart';
 import 'package:flutter_timelines/helper/helper_methods.dart';
 import 'package:flutter_timelines/view/components/text_box.dart';
 import 'package:flutter_timelines/view/components/wall_post.dart';
@@ -14,6 +16,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  bool isFollowing = false;
+
   String postid = "";
   List<WallPost> posts = []; //textController
   final textController = TextEditingController();
@@ -23,10 +27,48 @@ class _ProfilePageState extends State<ProfilePage> {
   final usersCollection = FirebaseFirestore.instance.collection('Users');
   final usersCollectionUpdateName =
       FirebaseFirestore.instance.collection('UserPosts');
+  int followerCount = 0;
+  int followingCount = 0;
   @override
   void initState() {
     super.initState();
     getLoading(); // 初期表示時にデータを取得
+    fetchFollowerCount();
+    fetchFollowingCount();
+  }
+
+// フォロワー数を取得するメソッド
+  void fetchFollowerCount() async {
+    try {
+      // FollowerCounter クラスのインスタンスを作成
+      FollowerCounter followerCounter = FollowerCounter();
+      // FollowerCounter クラスの getFollowersCount メソッドを使用してフォロワー数を取得
+      int count = await followerCounter.getFollowersCount(currentUser.uid);
+      // 取得したフォロワー数を followerCount 変数に代入
+      setState(() {
+        followerCount = count;
+      });
+    } catch (error) {
+      // エラーが発生した場合の処理
+      print('Error fetching followers count: $error');
+    }
+  }
+
+// フォロー中を取得するメソッド
+  void fetchFollowingCount() async {
+    try {
+      // FollowerCounter クラスのインスタンスを作成
+      FollowingCounter followerCounter = FollowingCounter();
+      // FollowerCounter クラスの getFollowersCount メソッドを使用してフォロワー数を取得
+      int count = await followerCounter.getFollowingCount(currentUser.uid);
+      // 取得したフォロワー数を followerCount 変数に代入
+      setState(() {
+        followingCount = count;
+      });
+    } catch (error) {
+      // エラーが発生した場合の処理
+      print('Error fetching followers count: $error');
+    }
   }
 
   // edit field
@@ -232,8 +274,37 @@ class _ProfilePageState extends State<ProfilePage> {
                         onPressed: () => editField('bio'),
                         email: currentUser.email,
                       ),
-                      const SizedBox(
-                        height: 50,
+
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 30, top: 15, bottom: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 10, right: 10),
+                              child: Text(
+                                "${followingCount} フォロー", // ここにフォロワー数を表示
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 10, right: 10),
+                              child: Text(
+                                "$followerCount フォロワー", // ここにフォロワー数を表示
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       //user posts
                       Padding(
