@@ -21,3 +21,16 @@ String formatDate(Timestamp timestamp) {
   String formattedData = '$year/$month/$day - $hour : $minute';
   return formattedData;
 }
+
+String chatMessageDate(Timestamp timestamp) {
+  //Timestamp is the object we retrieve from firebase
+  // so to display it, lets convert it to a string
+  DateTime dateTime = timestamp.toDate();
+  // get hour
+  String hour = dateTime.hour.toString().padLeft(2, '0');
+  // get minute
+  String minute = dateTime.minute.toString().padLeft(2, '0');
+  //final formatted date
+  String formattedData = '$hour : $minute';
+  return formattedData;
+}

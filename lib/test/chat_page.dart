@@ -121,7 +121,7 @@ class _ChatPageState extends State<ChatPage> {
     return MessageTile(
       message: data["message"],
       sentByMe: data['senderId'] == _firebaseAuth.currentUser!.uid,
-      time: formatDate(data['timestamp']),
+      time: chatMessageDate(data['timestamp']),
     );
   }
 
