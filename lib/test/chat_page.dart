@@ -24,6 +24,38 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
   final ChatService _chatService = ChatService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  // for textfield focus
+  FocusNode myFocusNode = FocusNode();
+  @override
+  void initState() {
+    super.initState();
+    // add listener to focus node
+    myFocusNode.addListener(() {
+      if (myFocusNode.hasFocus) {
+        // cause a delay so that the keyboard has time to show up
+        // then the amount of remaining space will be calculated
+        //then scroll down
+        Future.delayed(const Duration(milliseconds: 500), () => scrollDown());
+      }
+    });
+    // wait a bit for listview to be built, then scroll to bottom
+    Future.delayed(const Duration(milliseconds: 50), () => scrollDown());
+  }
+
+  @override
+  void dispose() {
+    myFocusNode.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  // scroll controller
+  final ScrollController _scrollController = ScrollController();
+  void scrollDown() async {
+    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+        duration: const Duration(seconds: 1), curve: Curves.fastOutSlowIn);
+  }
+
   void sendMessage() async {
     // only send message if there is something to send
     if (_messageController.text.isNotEmpty) {
@@ -31,6 +63,7 @@ class _ChatPageState extends State<ChatPage> {
       // clear the text controller after sending the message
       _messageController.clear();
     }
+    scrollDown();
   }
 
   @override
@@ -68,6 +101,7 @@ class _ChatPageState extends State<ChatPage> {
             return const Text("Loading...");
           }
           return ListView(
+            controller: _scrollController,
             children: snapshot.data!.docs
                 .map((document) => _buildmessageItem(document))
                 .toList(),
@@ -80,7 +114,6 @@ class _ChatPageState extends State<ChatPage> {
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
     return MessageTile(
       message: data["message"],
-      sender: data['senderEmail'],
       sentByMe: data['senderId'] == _firebaseAuth.currentUser!.uid,
     );
   }
@@ -97,6 +130,7 @@ class _ChatPageState extends State<ChatPage> {
               controller: _messageController,
               hintText: '入力',
               obscureText: false,
+              focusNode: myFocusNode,
             ),
           ),
           //send button

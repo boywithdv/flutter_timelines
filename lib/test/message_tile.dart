@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 
 class MessageTile extends StatefulWidget {
   final String message;
-  final String sender;
   final bool sentByMe;
 
-  const MessageTile(
-      {Key? key,
-      required this.message,
-      required this.sender,
-      required this.sentByMe})
+  const MessageTile({Key? key, required this.message, required this.sentByMe})
       : super(key: key);
 
   @override
@@ -47,28 +42,11 @@ class _MessageTileState extends State<MessageTile> {
             color: widget.sentByMe
                 ? Theme.of(context).primaryColor
                 : Colors.grey[700]),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.sender,
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  letterSpacing: -0.5),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Text(
-              widget.message,
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                  fontSize: 16, color: Theme.of(context).colorScheme.onPrimary),
-            )
-          ],
+        child: Text(
+          widget.message,
+          textAlign: TextAlign.start,
+          style: TextStyle(
+              fontSize: 16, color: Theme.of(context).colorScheme.onPrimary),
         ),
       ),
     );

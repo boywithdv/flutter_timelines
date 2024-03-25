@@ -7,6 +7,7 @@ class ChatTextField extends StatelessWidget {
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final int? maxLines;
+  final FocusNode? focusNode;
   const ChatTextField({
     super.key,
     required this.controller,
@@ -15,12 +16,14 @@ class ChatTextField extends StatelessWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.maxLines,
+    this.focusNode,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
+      focusNode: focusNode,
       obscureText: obscureText,
       maxLines: maxLines,
       decoration: InputDecoration(
