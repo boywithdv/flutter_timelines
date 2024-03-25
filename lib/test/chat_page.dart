@@ -46,7 +46,10 @@ class _ChatPageState extends State<ChatPage> {
             child: _buildMessageList(),
           ),
           //user input
-          _buildMessageInput()
+          _buildMessageInput(),
+          const SizedBox(
+            height: 30,
+          )
         ],
       ),
     );
@@ -59,7 +62,7 @@ class _ChatPageState extends State<ChatPage> {
             widget.uid, _firebaseAuth.currentUser!.uid),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Text("Error" + snapshot.error.toString());
+            return Text("Error${snapshot.error}");
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Text("Loading...");
@@ -75,11 +78,6 @@ class _ChatPageState extends State<ChatPage> {
   // build message item
   Widget _buildmessageItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-    // align the message to the right if the sender is the current user,otherwise to the left
-    var alignment = (data['senderId'] == _firebaseAuth.currentUser!.uid)
-        ? Alignment.centerRight
-        : Alignment.centerLeft;
-
     return MessageTile(
       message: data["message"],
       sender: data['senderEmail'],
@@ -102,9 +100,24 @@ class _ChatPageState extends State<ChatPage> {
         //send button
         IconButton(
           onPressed: sendMessage,
-          icon: Icon(
-            Icons.arrow_upward,
-            size: 40,
+          icon: Container(
+            width: 50,
+            height: 40,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: const LinearGradient(
+                colors: [Colors.deepPurple, Colors.blue], // グラデーションの色のリスト
+                begin: Alignment.centerLeft, // グラデーションの開始位置
+                end: Alignment.centerRight, // グラデーションの終了位置
+              ),
+            ),
+            child: Center(
+              child: Icon(
+                Icons.send,
+                size: 25,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
           ),
         )
       ],
