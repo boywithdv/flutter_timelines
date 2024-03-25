@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_timelines/test/chat_service.dart';
 import 'package:flutter_timelines/test/message_tile.dart';
-import 'package:flutter_timelines/view/components/custom_text_field.dart';
+import 'package:flutter_timelines/view/components/chat_text_field.dart';
 
 class ChatPage extends StatefulWidget {
   final String uid;
@@ -87,40 +87,43 @@ class _ChatPageState extends State<ChatPage> {
 
   // build message input
   Widget _buildMessageInput() {
-    return Row(
-      children: [
-        // textfield
-        Expanded(
-          child: CustomTextField(
-            controller: _messageController,
-            hintText: '入力',
-            obscureText: false,
-          ),
-        ),
-        //send button
-        IconButton(
-          onPressed: sendMessage,
-          icon: Container(
-            width: 50,
-            height: 40,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              gradient: const LinearGradient(
-                colors: [Colors.deepPurple, Colors.blue], // グラデーションの色のリスト
-                begin: Alignment.centerLeft, // グラデーションの開始位置
-                end: Alignment.centerRight, // グラデーションの終了位置
-              ),
-            ),
-            child: Center(
-              child: Icon(
-                Icons.send,
-                size: 25,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+    return Container(
+      width: 370,
+      child: Row(
+        children: [
+          // textfield
+          Expanded(
+            child: ChatTextField(
+              controller: _messageController,
+              hintText: '入力',
+              obscureText: false,
             ),
           ),
-        )
-      ],
+          //send button
+          IconButton(
+            onPressed: sendMessage,
+            icon: Container(
+              width: 50,
+              height: 40,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                gradient: const LinearGradient(
+                  colors: [Colors.deepPurple, Colors.blue], // グラデーションの色のリスト
+                  begin: Alignment.centerLeft, // グラデーションの開始位置
+                  end: Alignment.centerRight, // グラデーションの終了位置
+                ),
+              ),
+              child: Center(
+                child: Icon(
+                  Icons.send,
+                  size: 25,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }
