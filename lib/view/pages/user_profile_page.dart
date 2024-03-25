@@ -10,7 +10,7 @@ import 'package:flutter_timelines/view/components/wall_post.dart';
 import 'package:flutter_timelines/view/components/post_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_timelines/test/chat_page.dart';
+import 'package:flutter_timelines/view/components/chat_page.dart';
 
 class UserProfilePage extends StatefulWidget {
   final String message;

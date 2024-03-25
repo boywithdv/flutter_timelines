@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_timelines/helper/helper_methods.dart';
-import 'package:flutter_timelines/test/chat_service.dart';
-import 'package:flutter_timelines/test/message_tile.dart';
+import 'package:flutter_timelines/controller/chat_service.dart';
+import 'package:flutter_timelines/view/components/message_tile.dart';
 import 'package:flutter_timelines/view/components/chat_text_field.dart';
 
 class ChatPage extends StatefulWidget {
