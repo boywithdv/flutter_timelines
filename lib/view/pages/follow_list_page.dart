@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_timelines/view/components/user_follow_components.dart';
+import 'package:flutter_timelines/view/components/follow_list_tile.dart';
 
 class FollowListPage extends StatefulWidget {
   const FollowListPage({Key? key});
@@ -13,7 +13,7 @@ class FollowListPage extends StatefulWidget {
 
 class _FollowListPageState extends State<FollowListPage> {
   final currentUser = FirebaseAuth.instance.currentUser;
-  List<UserFollowComponents> users = [];
+  List<FollowListTile> users = [];
   Future<void> getLoading() async {
     // 新しい情報を取得する処理をここに追加する
     // 例: データベースから最新の投稿内容を取得する
@@ -30,7 +30,7 @@ class _FollowListPageState extends State<FollowListPage> {
       // ここでは新しい投稿内容をStateにセットしてUIを再構築する
       // snapshotから投稿データを取得し、Stateにセットする
       users = snapshot.docs
-          .map((user) => UserFollowComponents(
+          .map((user) => FollowListTile(
                 key: Key(user.id),
                 following: List<String>.from(user['Following'] ?? []),
                 followUserName: user["username"],
@@ -66,7 +66,7 @@ class _FollowListPageState extends State<FollowListPage> {
                   } else {
                     users.clear();
                     for (var user in snapshot.data!.docs) {
-                      final usr = UserFollowComponents(
+                      final usr = FollowListTile(
                         key: Key(user.id),
                         following: List<String>.from(user['Following'] ?? []),
                         followUserName: user["username"],
