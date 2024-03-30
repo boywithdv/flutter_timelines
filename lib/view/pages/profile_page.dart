@@ -7,6 +7,7 @@ import 'package:flutter_timelines/helper/helper_methods.dart';
 import 'package:flutter_timelines/view/components/text_box.dart';
 import 'package:flutter_timelines/view/components/wall_post.dart';
 import 'package:flutter_timelines/view/components/post_form.dart';
+import 'package:flutter_timelines/view/pages/follow_list_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -283,13 +284,24 @@ class _ProfilePageState extends State<ProfilePage> {
                           children: [
                             Padding(
                               padding: EdgeInsets.only(left: 10, right: 10),
-                              child: Text(
-                                "${followingCount} フォロー", // ここにフォロワー数を表示
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
+                              child: GestureDetector(
+                                child: Text(
+                                  "$followingCount フォロー", // ここにフォロワー数を表示
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                  ),
                                 ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          FollowListPage(),
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                             Padding(
