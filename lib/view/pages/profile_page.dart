@@ -283,7 +283,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Padding(
-                              padding: EdgeInsets.only(left: 10, right: 10),
+                              padding:
+                                  const EdgeInsets.only(left: 10, right: 10),
                               child: GestureDetector(
                                 child: Text(
                                   "$followingCount フォロー", // ここにフォロワー数を表示
@@ -305,7 +306,8 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.only(left: 10, right: 10),
+                              padding:
+                                  const EdgeInsets.only(left: 10, right: 10),
                               child: Text(
                                 "$followerCount フォロワー", // ここにフォロワー数を表示
                                 style: TextStyle(
