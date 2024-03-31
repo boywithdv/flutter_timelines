@@ -4,7 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_timelines/view/components/follow_list_tile.dart';
 
 class FollowingListPage extends StatefulWidget {
-  const FollowingListPage({Key? key});
+  final String uid;
+  final String username;
+  final String email;
+  const FollowingListPage(
+      {Key? key,
+      required this.uid,
+      required this.username,
+      required this.email});
 
   @override
   State<FollowingListPage> createState() => _FollowingListPageState();
@@ -55,7 +62,7 @@ class _FollowingListPageState extends State<FollowingListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Following"),
+        title: Text(widget.username),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),

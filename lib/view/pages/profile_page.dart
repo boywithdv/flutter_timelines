@@ -300,7 +300,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (BuildContext context) =>
-                                          FollowingListPage(),
+                                          FollowingListPage(
+                                              uid: currentUser.uid,
+                                              username: userData['username'],
+                                              email: currentUser.email!),
                                     ),
                                   );
                                 },
@@ -324,7 +327,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (BuildContext context) =>
-                                            FollowersListPage(),
+                                            FollowersListPage(
+                                                uid: currentUser.uid,
+                                                username: userData['username'],
+                                                email: currentUser.email!),
                                       ),
                                     );
                                   },
