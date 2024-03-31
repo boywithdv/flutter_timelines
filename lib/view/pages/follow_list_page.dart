@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_timelines/view/components/follow_list_tile.dart';
 
 class FollowListPage extends StatefulWidget {
@@ -14,30 +13,41 @@ class FollowListPage extends StatefulWidget {
 class _FollowListPageState extends State<FollowListPage> {
   final currentUser = FirebaseAuth.instance.currentUser;
   List<FollowListTile> users = [];
-  Future<void> getLoading() async {
-    // 新しい情報を取得する処理をここに追加する
-    // 例: データベースから最新の投稿内容を取得する
 
-    // データベースから最新の投稿内容を取得する場合の例
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
+  @override
+  void initState() {
+    super.initState();
+    fetchFollowingUsers();
+  }
+
+  Future<void> fetchFollowingUsers() async {
+    var currentUserDoc = await FirebaseFirestore.instance
         .collection('Users')
-        .orderBy("username", descending: true)
+        .doc(currentUser!.uid)
         .get();
+    List<dynamic> following = currentUserDoc['Following'];
 
-    // 新しい情報を反映させるためにStateを更新する
+    List<FollowListTile> followingUsers = [];
+    for (String userEmail in following) {
+      var userDocSnapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .where('email', isEqualTo: userEmail)
+          .get();
+      if (userDocSnapshot.docs.isNotEmpty) {
+        var userDoc = userDocSnapshot.docs.first;
+        var userTile = FollowListTile(
+          key: Key(userDoc.id),
+          following: List<String>.from(currentUserDoc['Following']),
+          followUserName: userDoc['username'],
+          followUid: userDoc['uid'],
+          followUserEmail: userDoc['email'],
+        );
+        followingUsers.add(userTile);
+      }
+    }
+
     setState(() {
-      // snapshotのデータを使ってUIを更新する
-      // ここでは新しい投稿内容をStateにセットしてUIを再構築する
-      // snapshotから投稿データを取得し、Stateにセットする
-      users = snapshot.docs
-          .map((user) => FollowListTile(
-                key: Key(user.id),
-                following: List<String>.from(user['Following'] ?? []),
-                followUserName: user["username"],
-                followUid: user["uid"],
-                followUserEmail: user["email"],
-              ))
-          .toList();
+      users = followingUsers;
     });
   }
 
@@ -45,49 +55,19 @@ class _FollowListPageState extends State<FollowListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Follow & Follower"),
+        title: const Text("Following"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-            // 投稿
             Expanded(
-              child: StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection('Users')
-                    .orderBy("username", descending: true)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    users.clear();
-                    for (var user in snapshot.data!.docs) {
-                      final usr = FollowListTile(
-                        key: Key(user.id),
-                        following: List<String>.from(user['Following'] ?? []),
-                        followUserName: user["username"],
-                        followUid: user["uid"],
-                        followUserEmail: user["email"],
-                      );
-                      users.add(usr);
-                    }
-                    return ListView.builder(
-                      itemCount: users.length,
-                      itemBuilder: (context, index) {
-                        //users[index] --- usersの中にあるuidが入っている
-                        return users[index];
-                      },
-                    );
-                  }
+              child: ListView.builder(
+                itemCount: users.length,
+                itemBuilder: (context, index) {
+                  return users[index];
                 },
               ),
-            ),
-            const SizedBox(
-              height: 50,
             ),
           ],
         ),

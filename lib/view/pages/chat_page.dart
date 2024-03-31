@@ -47,6 +47,7 @@ class _ChatPageState extends State<ChatPage> {
   void dispose() {
     myFocusNode.dispose();
     _messageController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
