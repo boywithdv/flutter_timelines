@@ -7,7 +7,7 @@ import 'package:flutter_timelines/helper/helper_methods.dart';
 import 'package:flutter_timelines/view/components/text_box.dart';
 import 'package:flutter_timelines/view/components/wall_post.dart';
 import 'package:flutter_timelines/view/components/post_form.dart';
-import 'package:flutter_timelines/view/pages/follow_list_page.dart';
+import 'package:flutter_timelines/view/pages/following_list_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -299,7 +299,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (BuildContext context) =>
-                                          FollowListPage(),
+                                          FollowingListPage(),
                                     ),
                                   );
                                 },

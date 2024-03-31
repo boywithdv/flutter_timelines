@@ -3,14 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_timelines/view/components/follow_list_tile.dart';
 
-class FollowListPage extends StatefulWidget {
-  const FollowListPage({Key? key});
+class FollowingListPage extends StatefulWidget {
+  const FollowingListPage({Key? key});
 
   @override
-  State<FollowListPage> createState() => _FollowListPageState();
+  State<FollowingListPage> createState() => _FollowingListPageState();
 }
 
-class _FollowListPageState extends State<FollowListPage> {
+class _FollowingListPageState extends State<FollowingListPage> {
   final currentUser = FirebaseAuth.instance.currentUser;
   List<FollowListTile> users = [];
 
